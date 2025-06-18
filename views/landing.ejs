@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+
+        .hero-text .subtitle {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            align-items: flex-start;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .install-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .shop-input-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .shop-input {
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            min-width: 250px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .shop-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .install-help {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin: 0;
+            text-align: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #00d4aa;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 212, 170, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #00b894;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 170, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+
+        .hero-visual {
+            position: relative;
+        }
+
+        .dashboard-preview {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .preview-header {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .preview-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .preview-content {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .preview-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .preview-metric {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+
+        .features {
+            padding: 6rem 0;
+            background: #f8fafc;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .feature {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .feature h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1a202c;
+        }
+
+        .feature p {
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.25rem;
+            color: #4a5568;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .cta-section {
+            padding: 6rem 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .cta-content h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .cta-content p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .hero-stats {
+                justify-content: center;
+            }
+        }
+
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .floating-element {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-element:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-element:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            top: 60%;
+            right: 15%;
+            animation-delay: 2s;
+        }
+
+        .floating-element:nth-child(3) {
+            width: 40px;
+            height: 40px;
+            top: 80%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="floating-elements">
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+        </div>
+        
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>AI-Powered Facebook Ads for Shopify</h1>
+                    <p class="subtitle">
+                        Transform your Shopify store with intelligent Facebook advertising. 
+                        Our AI creates, optimizes, and manages your campaigns automatically 
+                        to maximize ROAS and drive sales.
+                    </p>
+                    
+                    <div class="cta-buttons">
+                        <div class="install-form">
+                            <div class="shop-input-group">
+                                <input type="text" id="shopDomain" placeholder="your-store.myshopify.com" class="shop-input">
+                                <button onclick="installOnShopify()" class="btn btn-primary">
+                                    <i class="fab fa-shopify"></i>
+                                    Install on Shopify
+                                </button>
+                            </div>
+                            <p class="install-help">Enter your Shopify store domain to install the app</p>
+                        </div>
+                        <a href="/demo" class="btn btn-secondary">
+                            <i class="fas fa-play"></i>
+                            Try Demo
+                        </a>
+                    </div>
+                    
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <span class="stat-number">4.2x</span>
+                            <span class="stat-label">Average ROAS</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">85%</span>
+                            <span class="stat-label">Time Saved</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">10k+</span>
+                            <span class="stat-label">Campaigns Created</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="hero-visual">
+                    <div class="dashboard-preview">
+                        <div class="preview-header">
+                            <div class="preview-dot"></div>
+                            <div class="preview-dot"></div>
+                            <div class="preview-dot"></div>
+                        </div>
+                        <div class="preview-content">
+                            <h4 style="margin-bottom: 1rem;">AI Dashboard</h4>
+                            <div class="preview-metrics">
+                                <div class="preview-metric">
+                                    <div style="font-weight: 600;">$12,450</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.8;">Revenue</div>
+                                </div>
+                                <div class="preview-metric">
+                                    <div style="font-weight: 600;">4.2x</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.8;">ROAS</div>
+                                </div>
+                                <div class="preview-metric">
+                                    <div style="font-weight: 600;">2.8%</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.8;">CTR</div>
+                                </div>
+                                <div class="preview-metric">
+                                    <div style="font-weight: 600;">156</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.8;">Conversions</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="background: rgba(0, 212, 170, 0.2); padding: 0.75rem; border-radius: 0.5rem; text-align: center;">
+                            <i class="fas fa-robot" style="margin-right: 0.5rem;"></i>
+                            AI Optimization Active
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Powerful AI Features</h2>
+                <p class="section-subtitle">
+                    Everything you need to create, manage, and optimize Facebook ads 
+                    that actually convert and scale your Shopify business.
+                </p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <h3>AI Content Generation</h3>
+                    <p>
+                        Generate compelling ad copy, headlines, and descriptions using 
+                        advanced AI that understands your products and target audience.
+                    </p>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-target"></i>
+                    </div>
+                    <h3>Smart Targeting</h3>
+                    <p>
+                        AI-powered audience suggestions based on your product data, 
+                        customer behavior, and proven marketing strategies.
+                    </p>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Auto Optimization</h3>
+                    <p>
+                        Continuous campaign optimization with budget adjustments, 
+                        bid management, and creative testing for maximum ROAS.
+                    </p>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-sync"></i>
+                    </div>
+                    <h3>Shopify Integration</h3>
+                    <p>
+                        Seamless integration with your Shopify store for product sync, 
+                        order tracking, and revenue attribution.
+                    </p>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>Performance Insights</h3>
+                    <p>
+                        AI-driven insights and recommendations to improve your 
+                        campaigns and scale successful strategies.
+                    </p>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Complete Control</h3>
+                    <p>
+                        Connect your own Facebook ad account for full transparency 
+                        and control over your advertising spend and data.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Scale Your Shopify Store?</h2>
+                <p>
+                    Join thousands of successful merchants using AI to automate and 
+                    optimize their Facebook advertising. Start your free trial today.
+                </p>
+                <div class="cta-buttons">
+                    <div class="install-form">
+                        <div class="shop-input-group">
+                            <input type="text" id="shopDomainCta" placeholder="your-store.myshopify.com" class="shop-input">
+                            <button onclick="installOnShopifyFromCta()" class="btn btn-primary" style="font-size: 1.1rem; padding: 1.25rem 2.5rem;">
+                                <i class="fab fa-shopify"></i>
+                                Start Free Trial
+                            </button>
+                        </div>
+                        <p class="install-help">Enter your Shopify store domain to start your free trial</p>
+                    </div>
+                </div>
+                <p style="margin-top: 1rem; opacity: 0.8; font-size: 0.9rem;">
+                    14-day free trial • No credit card required • Cancel anytime
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add scroll effect to hero
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero');
+            hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+        });
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all feature cards
+        document.querySelectorAll('.feature').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // Auto-detect shop domain from various sources
+        function getShopDomain() {
+            // 1. Check URL parameters (from Shopify App Store installation)
+            const urlParams = new URLSearchParams(window.location.search);
+            const shopFromUrl = urlParams.get('shop');
+            if (shopFromUrl) {
+                return shopFromUrl;
+            }
+
+            // 2. Check if we're in Shopify admin iframe
+            if (window.parent !== window) {
+                try {
+                    const parentUrl = document.referrer;
+                    if (parentUrl && parentUrl.includes('.myshopify.com')) {
+                        const match = parentUrl.match(/https?:\/\/([^\/]+\.myshopify\.com)/);
+                        if (match) {
+                            return match[1];
+                        }
+                    }
+                } catch (e) {
+                    console.log('Cannot access parent URL due to CORS');
+                }
+            }
+
+            // 3. Check localStorage for previously used shop
+            const savedShop = localStorage.getItem('shopify_shop_domain');
+            if (savedShop) {
+                return savedShop;
+            }
+
+            return null;
+        }
+
+        // Install on Shopify function with auto-detection
+        function installOnShopify() {
+            // First try to auto-detect the shop domain
+            let shop = getShopDomain();
+            
+            // If auto-detection fails, get from input
+            if (!shop) {
+                const shopInput = document.getElementById('shopDomain');
+                shop = shopInput.value.trim();
+                
+                if (!shop) {
+                    alert('Please enter your Shopify store domain');
+                    shopInput.focus();
+                    return;
+                }
+            }
+            
+            // Clean up the shop domain
+            shop = shop.replace(/^https?:\/\//, ''); // Remove protocol
+            shop = shop.replace(/\/$/, ''); // Remove trailing slash
+            
+            // Add .myshopify.com if not present
+            if (!shop.includes('.myshopify.com')) {
+                if (shop.includes('.')) {
+                    // If it has a dot but not .myshopify.com, it might be a custom domain
+                    alert('Please use your .myshopify.com domain (e.g., your-store.myshopify.com)');
+                    return;
+                } else {
+                    // Just the store name, add .myshopify.com
+                    shop = shop + '.myshopify.com';
+                }
+            }
+            
+            // Validate the format
+            if (!/^[a-zA-Z0-9\-]+\.myshopify\.com$/.test(shop)) {
+                alert('Please enter a valid Shopify store domain (e.g., your-store.myshopify.com)');
+                return;
+            }
+
+            // Save to localStorage for future use
+            localStorage.setItem('shopify_shop_domain', shop);
+            
+            // Redirect to Shopify OAuth
+            window.location.href = `/auth/shopify?shop=${encodeURIComponent(shop)}`;
+        }
+
+        // Allow Enter key to trigger install
+        document.getElementById('shopDomain').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                installOnShopify();
+            }
+        });
+
+        // Install function for CTA section with auto-detection
+        function installOnShopifyFromCta() {
+            // First try to auto-detect the shop domain
+            let shop = getShopDomain();
+            
+            // If auto-detection fails, get from input
+            if (!shop) {
+                const shopInput = document.getElementById('shopDomainCta');
+                shop = shopInput.value.trim();
+                
+                if (!shop) {
+                    alert('Please enter your Shopify store domain');
+                    shopInput.focus();
+                    return;
+                }
+            }
+            
+            // Clean up the shop domain
+            shop = shop.replace(/^https?:\/\//, ''); // Remove protocol
+            shop = shop.replace(/\/$/, ''); // Remove trailing slash
+            
+            // Add .myshopify.com if not present
+            if (!shop.includes('.myshopify.com')) {
+                if (shop.includes('.')) {
+                    // If it has a dot but not .myshopify.com, it might be a custom domain
+                    alert('Please use your .myshopify.com domain (e.g., your-store.myshopify.com)');
+                    return;
+                } else {
+                    // Just the store name, add .myshopify.com
+                    shop = shop + '.myshopify.com';
+                }
+            }
+            
+            // Validate the format
+            if (!/^[a-zA-Z0-9\-]+\.myshopify\.com$/.test(shop)) {
+                alert('Please enter a valid Shopify store domain (e.g., your-store.myshopify.com)');
+                return;
+            }
+
+            // Save to localStorage for future use
+            localStorage.setItem('shopify_shop_domain', shop);
+            
+            // Redirect to Shopify OAuth
+            window.location.href = `/auth/shopify?shop=${encodeURIComponent(shop)}`;
+        }
+
+        // Allow Enter key for CTA input
+        document.getElementById('shopDomainCta').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                installOnShopifyFromCta();
+            }
+        });
+
+        // Auto-populate shop domain on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const detectedShop = getShopDomain();
+            if (detectedShop) {
+                // Auto-populate both input fields
+                const shopInput = document.getElementById('shopDomain');
+                const shopInputCta = document.getElementById('shopDomainCta');
+                
+                if (shopInput) {
+                    shopInput.value = detectedShop;
+                    shopInput.style.borderColor = '#10b981'; // Green border to indicate auto-detection
+                }
+                
+                if (shopInputCta) {
+                    shopInputCta.value = detectedShop;
+                    shopInputCta.style.borderColor = '#10b981'; // Green border to indicate auto-detection
+                }
+
+                // Show success message
+                const installHelp = document.querySelector('.install-help');
+                if (installHelp) {
+                    installHelp.innerHTML = `✅ Auto-detected: ${detectedShop} - Click install to continue`;
+                    installHelp.style.color = '#10b981';
+                }
+
+                // If we have auto-detected shop and user came from Shopify App Store, auto-install
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('shop') && urlParams.get('auto_install') === 'true') {
+                    // Small delay to show the auto-detection, then proceed
+                    setTimeout(() => {
+                        installOnShopify();
+                    }, 1500);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
