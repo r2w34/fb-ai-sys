@@ -2410,7 +2410,7 @@ var require_Provider = __commonJS({
     Object.defineProperty(exports, "__esModule", { value: !0 });
     exports.useRouter = exports.setClientInterfaceHook = void 0;
     var react_1 = __importStar(__require("react")), app_bridge_1 = __importStar(require_app_bridge()), context_1 = require_context(), ClientRouter_1 = require_ClientRouter2(), RoutePropagator_1 = require_RoutePropagator2(), packageJson = require_package2();
-    function Provider(_a) {
+    function Provider2(_a) {
       var config = _a.config, router = _a.router, children = _a.children, app = react_1.useMemo(function() {
         return app_bridge_1.default(config);
       }, []);
@@ -2438,7 +2438,7 @@ var require_Provider = __commonJS({
       var router = _a.router, children = _a.children;
       return ClientRouter_1.useClientRouting(router.history), RoutePropagator_1.useRoutePropagation(router.location), react_1.default.createElement(RouterContext.Provider, { value: router }, children);
     }
-    exports.default = Provider;
+    exports.default = Provider2;
   }
 });
 
@@ -47292,18 +47292,33 @@ function handleBrowserRequest(request, responseStatusCode, responseHeaders, remi
 // app/root.jsx
 var root_exports = {};
 __export(root_exports, {
-  default: () => App
+  default: () => App,
+  loader: () => loader
 });
+var import_app_bridge_react = __toESM(require_app_bridge_react(), 1);
+import "react";
+import { json } from "@remix-run/node";
 import {
   Links,
   LiveReload,
   Meta,
   Outlet,
   Scripts,
-  ScrollRestoration
+  ScrollRestoration,
+  useLoaderData
 } from "@remix-run/react";
+import { AppProvider } from "@shopify/polaris";
 import { jsx as jsx2, jsxs } from "react/jsx-runtime";
+var loader = async ({ request }) => {
+  let url = new URL(request.url);
+  return json({
+    apiKey: process.env.SHOPIFY_API_KEY || "",
+    host: url.searchParams.get("host") || "",
+    shop: url.searchParams.get("shop") || ""
+  });
+};
 function App() {
+  let { apiKey, host, shop } = useLoaderData();
   return /* @__PURE__ */ jsxs("html", { children: [
     /* @__PURE__ */ jsxs("head", { children: [
       /* @__PURE__ */ jsx2("meta", { charSet: "utf-8" }),
@@ -47320,7 +47335,48 @@ function App() {
       /* @__PURE__ */ jsx2(Links, {})
     ] }),
     /* @__PURE__ */ jsxs("body", { children: [
-      /* @__PURE__ */ jsx2(Outlet, {}),
+      /* @__PURE__ */ jsx2(import_app_bridge_react.Provider, { config: {
+        apiKey,
+        host,
+        forceRedirect: !0
+      }, children: /* @__PURE__ */ jsx2(
+        AppProvider,
+        {
+          i18n: {
+            Polaris: {
+              Avatar: {
+                label: "Avatar",
+                labelWithInitials: "Avatar with initials {initials}"
+              },
+              ContextualSaveBar: {
+                save: "Save",
+                discard: "Discard"
+              },
+              TextField: {
+                characterCount: "{count} characters"
+              },
+              TopBar: {
+                toggleMenuLabel: "Toggle menu",
+                SearchField: {
+                  clearButtonLabel: "Clear",
+                  search: "Search"
+                }
+              },
+              Modal: {
+                iFrameTitle: "body markup"
+              },
+              Frame: {
+                skipToContent: "Skip to content",
+                navigationLabel: "Navigation",
+                Navigation: {
+                  closeMobileNavigationLabel: "Close navigation"
+                }
+              }
+            }
+          },
+          children: /* @__PURE__ */ jsx2(Outlet, {})
+        }
+      ) }),
       /* @__PURE__ */ jsx2(ScrollRestoration, {}),
       /* @__PURE__ */ jsx2(Scripts, {}),
       /* @__PURE__ */ jsx2(LiveReload, {})
@@ -47332,11 +47388,11 @@ function App() {
 var campaigns_index_exports = {};
 __export(campaigns_index_exports, {
   default: () => CampaignsIndex,
-  loader: () => loader
+  loader: () => loader2
 });
-var import_app_bridge_react = __toESM(require_app_bridge_react(), 1);
-import { json } from "@remix-run/node";
-import { useLoaderData, useNavigate } from "@remix-run/react";
+var import_app_bridge_react2 = __toESM(require_app_bridge_react(), 1);
+import { json as json2 } from "@remix-run/node";
+import { useLoaderData as useLoaderData2, useNavigate } from "@remix-run/react";
 import {
   Page,
   Layout,
@@ -47551,15 +47607,15 @@ async function createWebhookEvent(eventData) {
 // app/routes/campaigns._index.jsx
 import { useState, useCallback } from "react";
 import { Fragment, jsx as jsx3, jsxs as jsxs2 } from "react/jsx-runtime";
-var loader = async ({ request }) => {
+var loader2 = async ({ request }) => {
   let { admin, session } = await authenticate.admin(request), store = await getStore2(session.shop), campaigns = [];
-  return store && (campaigns = await getCampaigns(store.id)), json({
+  return store && (campaigns = await getCampaigns(store.id)), json2({
     campaigns,
     store
   });
 };
 function CampaignsIndex() {
-  let { campaigns, store } = useLoaderData(), navigate = useNavigate(), [queryValue, setQueryValue] = useState(""), [statusFilter, setStatusFilter] = useState([]), handleQueryValueChange = useCallback((value) => setQueryValue(value), []), handleStatusFilterChange = useCallback((value) => setStatusFilter(value), []), handleQueryValueRemove = useCallback(() => setQueryValue(""), []), handleStatusFilterRemove = useCallback(() => setStatusFilter([]), []), handleFiltersClearAll = useCallback(() => {
+  let { campaigns, store } = useLoaderData2(), navigate = useNavigate(), [queryValue, setQueryValue] = useState(""), [statusFilter, setStatusFilter] = useState([]), handleQueryValueChange = useCallback((value) => setQueryValue(value), []), handleStatusFilterChange = useCallback((value) => setStatusFilter(value), []), handleQueryValueRemove = useCallback(() => setQueryValue(""), []), handleStatusFilterRemove = useCallback(() => setStatusFilter([]), []), handleFiltersClearAll = useCallback(() => {
     handleQueryValueRemove(), handleStatusFilterRemove();
   }, [handleQueryValueRemove, handleStatusFilterRemove]), filters = [
     {
@@ -47623,7 +47679,7 @@ function CampaignsIndex() {
   ];
   return /* @__PURE__ */ jsxs2(Page, { children: [
     /* @__PURE__ */ jsx3(
-      import_app_bridge_react.TitleBar,
+      import_app_bridge_react2.TitleBar,
       {
         title: "Campaigns",
         primaryAction: {
@@ -47705,11 +47761,11 @@ var campaigns_new_exports = {};
 __export(campaigns_new_exports, {
   action: () => action,
   default: () => NewCampaign,
-  loader: () => loader2
+  loader: () => loader3
 });
-var import_app_bridge_react2 = __toESM(require_app_bridge_react(), 1);
-import { json as json2, redirect } from "@remix-run/node";
-import { useLoaderData as useLoaderData2, useActionData, useNavigation, Form } from "@remix-run/react";
+var import_app_bridge_react3 = __toESM(require_app_bridge_react(), 1);
+import { json as json3, redirect } from "@remix-run/node";
+import { useLoaderData as useLoaderData3, useActionData, useNavigation, Form } from "@remix-run/react";
 import {
   Page as Page3,
   Layout as Layout2,
@@ -48266,26 +48322,26 @@ var aiGenerator = new AIAdGenerator();
 // app/routes/campaigns.new.jsx
 import { useState as useState2, useCallback as useCallback2 } from "react";
 import { jsx as jsx4, jsxs as jsxs3 } from "react/jsx-runtime";
-var loader2 = async ({ request }) => {
+var loader3 = async ({ request }) => {
   let { admin, session } = await authenticate.admin(request), store = await getStore2(session.shop);
   if (!store)
     throw new Response("Store not found", { status: 404 });
   if (!store.facebookAccessToken)
     throw redirect("/settings/facebook");
   let products = await getProducts(store.id);
-  return json2({
+  return json3({
     store,
     products
   });
 }, action = async ({ request }) => {
   let { admin, session } = await authenticate.admin(request), formData = await request.formData(), action3 = formData.get("_action"), store = await getStore2(session.shop);
   if (!store || !store.facebookAccessToken)
-    return json2({ error: "Facebook account not connected" }, { status: 400 });
+    return json3({ error: "Facebook account not connected" }, { status: 400 });
   try {
     if (action3 === "generate_ai_content") {
       let selectedProductIds = JSON.parse(formData.get("selectedProducts") || "[]"), targetAudience = formData.get("targetAudience"), campaignObjective = formData.get("campaignObjective");
       if (selectedProductIds.length === 0)
-        return json2({ error: "Please select at least one product" }, { status: 400 });
+        return json3({ error: "Please select at least one product" }, { status: 400 });
       let primaryProduct = (await getProducts(store.id, {
         where: { id: { in: selectedProductIds } }
       }))[0], aiContent = await aiGenerator.generateCampaignContent(
@@ -48293,7 +48349,7 @@ var loader2 = async ({ request }) => {
         targetAudience,
         campaignObjective
       );
-      return json2({ aiContent, success: !0 });
+      return json3({ aiContent, success: !0 });
     } else if (action3 === "create_campaign") {
       let campaignName = formData.get("campaignName"), campaignObjective = formData.get("campaignObjective"), budget = parseFloat(formData.get("budget")), selectedProductIds = JSON.parse(formData.get("selectedProducts") || "[]"), aiContent = JSON.parse(formData.get("aiContent") || "{}"), fbCampaign = await new FacebookAdsManager(
         store.facebookAccessToken,
@@ -48317,12 +48373,12 @@ var loader2 = async ({ request }) => {
       return redirect(`/campaigns/${campaign.id}`);
     }
   } catch (error) {
-    return console.error("Campaign creation error:", error), json2({ error: error.message }, { status: 500 });
+    return console.error("Campaign creation error:", error), json3({ error: error.message }, { status: 500 });
   }
-  return json2({ error: "Invalid action" }, { status: 400 });
+  return json3({ error: "Invalid action" }, { status: 400 });
 };
 function NewCampaign() {
-  let { store, products } = useLoaderData2(), actionData = useActionData(), navigation = useNavigation(), [selectedProducts, setSelectedProducts] = useState2([]), [campaignName, setCampaignName] = useState2(""), [campaignObjective, setCampaignObjective] = useState2("CONVERSIONS"), [targetAudience, setTargetAudience] = useState2(""), [budget, setBudget] = useState2("50"), [showAIContent, setShowAIContent] = useState2(!1), isGenerating = navigation.state === "submitting" && navigation.formData?.get("_action") === "generate_ai_content", isCreating = navigation.state === "submitting" && navigation.formData?.get("_action") === "create_campaign", handleProductSelection = useCallback2((productId) => {
+  let { store, products } = useLoaderData3(), actionData = useActionData(), navigation = useNavigation(), [selectedProducts, setSelectedProducts] = useState2([]), [campaignName, setCampaignName] = useState2(""), [campaignObjective, setCampaignObjective] = useState2("CONVERSIONS"), [targetAudience, setTargetAudience] = useState2(""), [budget, setBudget] = useState2("50"), [showAIContent, setShowAIContent] = useState2(!1), isGenerating = navigation.state === "submitting" && navigation.formData?.get("_action") === "generate_ai_content", isCreating = navigation.state === "submitting" && navigation.formData?.get("_action") === "create_campaign", handleProductSelection = useCallback2((productId) => {
     setSelectedProducts(
       (prev) => prev.includes(productId) ? prev.filter((id) => id !== productId) : [...prev, productId]
     );
@@ -48334,7 +48390,7 @@ function NewCampaign() {
     { label: "Video Views", value: "VIDEO_VIEWS" }
   ];
   return /* @__PURE__ */ jsxs3(Page3, { children: [
-    /* @__PURE__ */ jsx4(import_app_bridge_react2.TitleBar, { title: "Create AI Campaign" }),
+    /* @__PURE__ */ jsx4(import_app_bridge_react3.TitleBar, { title: "Create AI Campaign" }),
     /* @__PURE__ */ jsx4(Layout2, { children: /* @__PURE__ */ jsx4(Layout2.Section, { children: /* @__PURE__ */ jsxs3(BlockStack2, { gap: "500", children: [
       actionData?.error && /* @__PURE__ */ jsx4(Banner, { tone: "critical", children: /* @__PURE__ */ jsx4("p", { children: actionData.error }) }),
       /* @__PURE__ */ jsx4(Card2, { children: /* @__PURE__ */ jsxs3(BlockStack2, { gap: "400", children: [
@@ -48604,12 +48660,12 @@ var action2 = async ({ request }) => {
 var index_exports = {};
 __export(index_exports, {
   default: () => Index,
-  loader: () => loader3
+  loader: () => loader4
 });
-var import_app_bridge_react3 = __toESM(require_app_bridge_react(), 1);
+var import_app_bridge_react4 = __toESM(require_app_bridge_react(), 1);
 import "react";
-import { json as json3 } from "@remix-run/node";
-import { useLoaderData as useLoaderData3, useNavigate as useNavigate2 } from "@remix-run/react";
+import { json as json4 } from "@remix-run/node";
+import { useLoaderData as useLoaderData4, useNavigate as useNavigate2 } from "@remix-run/react";
 import {
   Page as Page4,
   Layout as Layout3,
@@ -48631,7 +48687,7 @@ import {
   InfoIcon
 } from "@shopify/polaris-icons";
 import { jsx as jsx5, jsxs as jsxs4 } from "react/jsx-runtime";
-var loader3 = async ({ request }) => {
+var loader4 = async ({ request }) => {
   let { admin, session } = await authenticate.admin(request), store = await getStore2(session.shop), campaigns = [], products = [], stats = {
     totalCampaigns: 0,
     activeCampaigns: 0,
@@ -48643,7 +48699,7 @@ var loader3 = async ({ request }) => {
     activeCampaigns: campaigns.filter((c) => c.status === "ACTIVE").length,
     totalSpend: campaigns.reduce((sum, c) => sum + (c.spend || 0), 0),
     totalConversions: campaigns.reduce((sum, c) => sum + (c.conversions || 0), 0)
-  }), json3({
+  }), json4({
     store,
     campaigns,
     products,
@@ -48652,9 +48708,9 @@ var loader3 = async ({ request }) => {
   });
 };
 function Index() {
-  let { store, campaigns, products, stats, shopDomain } = useLoaderData3(), navigate = useNavigate2();
+  let { store, campaigns, products, stats, shopDomain } = useLoaderData4(), navigate = useNavigate2();
   return /* @__PURE__ */ jsxs4(Page4, { children: [
-    /* @__PURE__ */ jsx5(import_app_bridge_react3.TitleBar, { title: "AI Facebook Ads Pro" }),
+    /* @__PURE__ */ jsx5(import_app_bridge_react4.TitleBar, { title: "AI Facebook Ads Pro" }),
     /* @__PURE__ */ jsx5(Layout3, { children: /* @__PURE__ */ jsx5(Layout3.Section, { children: /* @__PURE__ */ jsxs4(BlockStack3, { gap: "500", children: [
       !store?.facebookAccessToken && /* @__PURE__ */ jsx5(
         Banner2,
@@ -48775,12 +48831,12 @@ function Index() {
 // app/routes/auth.$.jsx
 var auth_exports = {};
 __export(auth_exports, {
-  loader: () => loader4
+  loader: () => loader5
 });
-var loader4 = async ({ request }) => (await authenticate.admin(request), null);
+var loader5 = async ({ request }) => (await authenticate.admin(request), null);
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { entry: { module: "/build/entry.client-4R2WUOHK.js", imports: ["/build/_shared/chunk-PDV4PDDZ.js", "/build/_shared/chunk-Q3IECNXJ.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-3WEY3WC4.js", imports: void 0, hasAction: !1, hasLoader: !1, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/_index": { id: "routes/_index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/_index-DD5CKKBQ.js", imports: ["/build/_shared/chunk-WWDVGBK5.js"], hasAction: !1, hasLoader: !0, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/auth.$": { id: "routes/auth.$", parentId: "root", path: "auth/*", index: void 0, caseSensitive: void 0, module: "/build/routes/auth.$-JID2MVQG.js", imports: void 0, hasAction: !1, hasLoader: !0, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/campaigns._index": { id: "routes/campaigns._index", parentId: "root", path: "campaigns", index: !0, caseSensitive: void 0, module: "/build/routes/campaigns._index-YV3232P7.js", imports: ["/build/_shared/chunk-WWDVGBK5.js"], hasAction: !1, hasLoader: !0, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/campaigns.new": { id: "routes/campaigns.new", parentId: "root", path: "campaigns/new", index: void 0, caseSensitive: void 0, module: "/build/routes/campaigns.new-BFLZ5A25.js", imports: ["/build/_shared/chunk-WWDVGBK5.js"], hasAction: !0, hasLoader: !0, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/webhooks": { id: "routes/webhooks", parentId: "root", path: "webhooks", index: void 0, caseSensitive: void 0, module: "/build/routes/webhooks-U3VAOICH.js", imports: void 0, hasAction: !0, hasLoader: !1, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 } }, version: "bcbebe40", hmr: void 0, url: "/build/manifest-BCBEBE40.js" };
+var assets_manifest_default = { entry: { module: "/build/entry.client-4R2WUOHK.js", imports: ["/build/_shared/chunk-PDV4PDDZ.js", "/build/_shared/chunk-Q3IECNXJ.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-NPPE2X7X.js", imports: ["/build/_shared/chunk-GCFUY6YW.js"], hasAction: !1, hasLoader: !0, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/_index": { id: "routes/_index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/_index-DZTBWOD6.js", imports: ["/build/_shared/chunk-F4Y5DWSE.js"], hasAction: !1, hasLoader: !0, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/auth.$": { id: "routes/auth.$", parentId: "root", path: "auth/*", index: void 0, caseSensitive: void 0, module: "/build/routes/auth.$-JID2MVQG.js", imports: void 0, hasAction: !1, hasLoader: !0, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/campaigns._index": { id: "routes/campaigns._index", parentId: "root", path: "campaigns", index: !0, caseSensitive: void 0, module: "/build/routes/campaigns._index-QHMEC7SB.js", imports: ["/build/_shared/chunk-F4Y5DWSE.js"], hasAction: !1, hasLoader: !0, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/campaigns.new": { id: "routes/campaigns.new", parentId: "root", path: "campaigns/new", index: void 0, caseSensitive: void 0, module: "/build/routes/campaigns.new-OQITO5KP.js", imports: ["/build/_shared/chunk-F4Y5DWSE.js"], hasAction: !0, hasLoader: !0, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 }, "routes/webhooks": { id: "routes/webhooks", parentId: "root", path: "webhooks", index: void 0, caseSensitive: void 0, module: "/build/routes/webhooks-U3VAOICH.js", imports: void 0, hasAction: !0, hasLoader: !1, hasClientAction: !1, hasClientLoader: !1, hasErrorBoundary: !1 } }, version: "0cf0ebfe", hmr: void 0, url: "/build/manifest-0CF0EBFE.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var mode = "production", assetsBuildDirectory = "public/build", future = { v3_fetcherPersist: !1, v3_relativeSplatPath: !1, v3_throwAbortReason: !1, v3_routeConfig: !1, v3_singleFetch: !1, v3_lazyRouteDiscovery: !1, unstable_optimizeDeps: !1 }, publicPath = "/build/", entry = { module: entry_server_node_exports }, routes = {
