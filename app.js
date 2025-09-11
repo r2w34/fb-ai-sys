@@ -76,7 +76,7 @@ const router = new Router();
 // Environment variables
 const {
   NODE_ENV = 'production',
-  PORT = process.env.PORT || 12000,
+  PORT = process.env.PORT || 54594,
   SESSION_SECRET = 'your-secret-key',
   HOST = process.env.HOST || 'https://work-1-nyyacaaazrijxtar.prod-runtime.all-hands.dev'
 } = process.env;

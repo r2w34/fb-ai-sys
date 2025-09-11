@@ -1,0 +1,272 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  id          String    @id
+  shop        String
+  state       String
+  isOnline    Boolean   @default(false)
+  scope       String?
+  expires     DateTime?
+  accessToken String
+  userId      BigInt?
+  firstName   String?
+  lastName    String?
+  email       String?
+  accountOwner Boolean  @default(false)
+  locale      String?
+  collaborator Boolean? @default(false)
+  emailVerified Boolean? @default(false)
+}
+
+model Store {
+  id                String    @id @default(cuid())
+  shopDomain        String    @unique
+  accessToken       String
+  scope             String?
+  isActive          Boolean   @default(true)
+  plan              String?   @default("free")
+  installedAt       DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  // Facebook Integration
+  facebookAccountId String?
+  facebookAccessToken String?
+  facebookPageId    String?
+  
+  // Settings
+  settings          String?
+  
+  // Relations
+  campaigns         Campaign[]
+  products          Product[]
+  orders            Order[]
+  
+  @@map("stores")
+}
+
+model Campaign {
+  id                String    @id @default(cuid())
+  storeId           String
+  facebookCampaignId String?  @unique
+  
+  // Campaign Details
+  name              String
+  objective         String
+  status            String    @default("PAUSED")
+  budget            Float?
+  budgetType        String?   @default("DAILY")
+  
+  // AI Generated Content
+  aiPrompt          String?
+  generatedContent  String?
+  
+  // Performance Metrics
+  impressions       Int?      @default(0)
+  clicks            Int?      @default(0)
+  conversions       Int?      @default(0)
+  spend             Float?    @default(0)
+  ctr               Float?    @default(0)
+  cpc               Float?    @default(0)
+  cpm               Float?    @default(0)
+  roas              Float?    @default(0)
+  
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  startDate         DateTime?
+  endDate           DateTime?
+  
+  // Relations
+  store             Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  adSets            AdSet[]
+  
+  @@map("campaigns")
+}
+
+model AdSet {
+  id                String    @id @default(cuid())
+  campaignId        String
+  facebookAdSetId   String?   @unique
+  
+  // AdSet Details
+  name              String
+  status            String    @default("PAUSED")
+  budget            Float?
+  budgetType        String?   @default("DAILY")
+  
+  // Targeting
+  targeting         String?
+  
+  // Performance Metrics
+  impressions       Int?      @default(0)
+  clicks            Int?      @default(0)
+  conversions       Int?      @default(0)
+  spend             Float?    @default(0)
+  
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  // Relations
+  campaign          Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  ads               Ad[]
+  
+  @@map("ad_sets")
+}
+
+model Ad {
+  id                String    @id @default(cuid())
+  adSetId           String
+  facebookAdId      String?   @unique
+  
+  // Ad Details
+  name              String
+  status            String    @default("PAUSED")
+  
+  // Creative
+  headline          String?
+  description       String?
+  imageUrl          String?
+  videoUrl          String?
+  callToAction      String?
+  
+  // Performance Metrics
+  impressions       Int?      @default(0)
+  clicks            Int?      @default(0)
+  conversions       Int?      @default(0)
+  spend             Float?    @default(0)
+  
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  // Relations
+  adSet             AdSet     @relation(fields: [adSetId], references: [id], onDelete: Cascade)
+  
+  @@map("ads")
+}
+
+model Product {
+  id                String    @id @default(cuid())
+  storeId           String
+  shopifyProductId  String
+  
+  // Product Details
+  title             String
+  handle            String
+  description       String?
+  vendor            String?
+  productType       String?
+  tags              String?
+  
+  // Pricing
+  price             Float?
+  compareAtPrice    Float?
+  
+  // Images
+  images            String?
+  
+  // AI Analysis
+  aiAnalysis        String?
+  adRecommendations String?
+  
+  // Performance
+  totalSales        Float?    @default(0)
+  totalOrders       Int?      @default(0)
+  
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  // Relations
+  store             Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  
+  @@unique([storeId, shopifyProductId])
+  @@map("products")
+}
+
+model Order {
+  id                String    @id @default(cuid())
+  storeId           String
+  shopifyOrderId    String
+  
+  // Order Details
+  orderNumber       String
+  email             String?
+  totalPrice        Float
+  subtotalPrice     Float?
+  totalTax          Float?
+  currency          String    @default("USD")
+  
+  // Customer Info
+  customerFirstName String?
+  customerLastName  String?
+  customerEmail     String?
+  
+  // Attribution
+  utmSource         String?
+  utmMedium         String?
+  utmCampaign       String?
+  referringSite     String?
+  
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  processedAt       DateTime?
+  
+  // Relations
+  store             Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  
+  @@unique([storeId, shopifyOrderId])
+  @@map("orders")
+}
+
+model AIOptimization {
+  id                String    @id @default(cuid())
+  storeId           String
+  
+  // Optimization Details
+  type              String    // "campaign", "adset", "ad", "targeting"
+  entityId          String    // ID of the entity being optimized
+  
+  // AI Recommendations
+  recommendations   String
+  confidence        Float?
+  
+  // Implementation
+  implemented       Boolean   @default(false)
+  implementedAt     DateTime?
+  
+  // Results
+  beforeMetrics     String?
+  afterMetrics      String?
+  improvement       Float?
+  
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  @@map("ai_optimizations")
+}
+
+model WebhookEvent {
+  id                String    @id @default(cuid())
+  shopDomain        String
+  topic             String
+  payload           String
+  processed         Boolean   @default(false)
+  processedAt       DateTime?
+  createdAt         DateTime  @default(now())
+  
+  @@map("webhook_events")
+}
