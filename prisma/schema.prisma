@@ -30,3 +30,137 @@ model Session {
   collaborator  Boolean?  @default(false)
   emailVerified Boolean?  @default(false)
 }
+
+model FacebookAccount {
+  id                String    @id @default(cuid())
+  shop              String
+  facebookUserId    String
+  accessToken       String
+  businessId        String?
+  adAccountId       String?
+  pageId            String?
+  isActive          Boolean   @default(true)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  campaigns         Campaign[]
+  
+  @@unique([shop, facebookUserId])
+}
+
+model Campaign {
+  id                String    @id @default(cuid())
+  shop              String
+  facebookAccountId String
+  facebookAccount   FacebookAccount @relation(fields: [facebookAccountId], references: [id], onDelete: Cascade)
+  
+  // Campaign details
+  name              String
+  objective         String    // CONVERSIONS, TRAFFIC, AWARENESS, etc.
+  status            String    @default("PAUSED") // ACTIVE, PAUSED, DELETED
+  budget            Float?
+  budgetType        String?   // DAILY, LIFETIME
+  
+  // Facebook Campaign ID
+  facebookCampaignId String?
+  
+  // Product targeting
+  productIds        String?   // JSON array of Shopify product IDs
+  
+  // AI-generated content
+  adCopy            String?
+  headline          String?
+  description       String?
+  
+  // Performance metrics
+  impressions       Int       @default(0)
+  clicks            Int       @default(0)
+  conversions       Int       @default(0)
+  spend             Float     @default(0)
+  revenue           Float     @default(0)
+  
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  lastSyncAt        DateTime?
+  
+  adSets            AdSet[]
+  ads               Ad[]
+}
+
+model AdSet {
+  id                String    @id @default(cuid())
+  campaignId        String
+  campaign          Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  
+  name              String
+  status            String    @default("PAUSED")
+  budget            Float?
+  budgetType        String?
+  
+  // Facebook AdSet ID
+  facebookAdSetId   String?
+  
+  // Targeting
+  targetingAge      String?   // "18-65"
+  targetingGender   String?   // "all", "male", "female"
+  targetingCountries String?  // JSON array
+  targetingInterests String?  // JSON array
+  
+  // Performance
+  impressions       Int       @default(0)
+  clicks            Int       @default(0)
+  conversions       Int       @default(0)
+  spend             Float     @default(0)
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  ads               Ad[]
+}
+
+model Ad {
+  id                String    @id @default(cuid())
+  campaignId        String
+  campaign          Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  adSetId           String
+  adSet             AdSet     @relation(fields: [adSetId], references: [id], onDelete: Cascade)
+  
+  name              String
+  status            String    @default("PAUSED")
+  
+  // Facebook Ad ID
+  facebookAdId      String?
+  
+  // Creative content
+  headline          String?
+  primaryText       String?
+  description       String?
+  imageUrl          String?
+  linkUrl           String?
+  callToAction      String?   // SHOP_NOW, LEARN_MORE, etc.
+  
+  // Performance
+  impressions       Int       @default(0)
+  clicks            Int       @default(0)
+  conversions       Int       @default(0)
+  spend             Float     @default(0)
+  ctr               Float     @default(0)
+  cpc               Float     @default(0)
+  cpm               Float     @default(0)
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model AIPrompt {
+  id                String    @id @default(cuid())
+  shop              String
+  type              String    // "headline", "description", "ad_copy"
+  prompt            String
+  response          String?
+  productId         String?
+  campaignId        String?
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}

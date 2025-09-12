@@ -1,6 +1,18 @@
-# This file stores configurations for your Shopify app.
+# AI Facebook Ads Pro - Shopify App Configuration
 
-scopes = "write_products"
+name = "AI Facebook Ads Pro"
+client_id = "a3d2df3db3637864e20e8ba3d885d276"
+application_url = "https://fbai-app.trustclouds.in"
+embedded = true
+
+scopes = "read_products,write_products,read_orders,write_orders,read_customers,write_customers,read_analytics"
+
+[auth]
+redirect_urls = [
+  "http://194.164.149.183:8080/auth/shopify/callback",
+  "https://fbai-app.trustclouds.in/auth/shopify/callback",
+  "http://fbai-app.trustclouds.in/auth/shopify/callback"
+]
 
 [webhooks]
 api_version = "2024-10"
