@@ -20,7 +20,7 @@ import {
   DataTable,
 } from "@shopify/polaris";
 import { TitleBar, useAppBridge } from "@shopify/app-bridge-react";
-import { EditIcon, DeleteIcon, PlayIcon, PauseIcon } from "@shopify/polaris-icons";
+import { EditIcon, DeleteIcon, PlayIcon, PauseCircleIcon } from "@shopify/polaris-icons";
 import { authenticate } from "../shopify.server";
 import { db } from "../db.server";
 
@@ -160,7 +160,7 @@ const formatDate = (date: string) => {
 
 export default function CampaignDetail() {
   const data = useLoaderData<typeof loader>();
-  const actionData = useActionData<typeof action>();
+  const actionData = useActionData<typeof action>() as { success?: string; error?: string } | undefined;
   const navigation = useNavigation();
   const shopify = useAppBridge();
 
@@ -220,7 +220,7 @@ export default function CampaignDetail() {
       <TitleBar title={data.campaign.name}>
         <ButtonGroup>
           <Button
-            icon={data.campaign.status === 'ACTIVE' ? PauseIcon : PlayIcon}
+            icon={data.campaign.status === 'ACTIVE' ? PauseCircleIcon : PlayIcon}
             onClick={() => {
               const form = new FormData();
               form.append('action', data.campaign.status === 'ACTIVE' ? 'pause' : 'resume');

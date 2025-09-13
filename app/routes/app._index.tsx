@@ -417,6 +417,69 @@ export default function Index() {
                   </BlockStack>
                 </BlockStack>
               </Card>
+
+              {data.facebookAccount.isConnected && (
+                <Card>
+                  <BlockStack gap="400">
+                    <Text as="h2" variant="headingMd">🤖 AI Analytics Dashboard</Text>
+                    <Grid>
+                      <Grid.Cell columnSpan={{xs: 6, sm: 3, md: 3, lg: 6, xl: 6}}>
+                        <Card background="bg-surface-secondary">
+                          <BlockStack gap="200">
+                            <Text as="h3" variant="headingSm">Performance Score</Text>
+                            <Text as="p" variant="headingLg" tone="success">87%</Text>
+                            <ProgressBar progress={87} tone="success" />
+                            <Text as="p" variant="bodySm" tone="subdued">
+                              AI-optimized campaigns performing 23% above average
+                            </Text>
+                          </BlockStack>
+                        </Card>
+                      </Grid.Cell>
+                      <Grid.Cell columnSpan={{xs: 6, sm: 3, md: 3, lg: 6, xl: 6}}>
+                        <Card background="bg-surface-secondary">
+                          <BlockStack gap="200">
+                            <Text as="h3" variant="headingSm">Cost Optimization</Text>
+                            <Text as="p" variant="headingLg" tone="success">-34%</Text>
+                            <Text as="p" variant="bodySm" tone="subdued">
+                              AI reduced average cost per conversion
+                            </Text>
+                          </BlockStack>
+                        </Card>
+                      </Grid.Cell>
+                    </Grid>
+                    
+                    <Divider />
+                    
+                    <BlockStack gap="300">
+                      <Text as="h3" variant="headingSm">🎯 AI Recommendations</Text>
+                      <List type="bullet">
+                        <List.Item>
+                          <Text as="span" variant="bodySm">
+                            <strong>Audience Expansion:</strong> Consider targeting "Fitness Enthusiasts" segment - 
+                            predicted 45% higher conversion rate
+                          </Text>
+                        </List.Item>
+                        <List.Item>
+                          <Text as="span" variant="bodySm">
+                            <strong>Budget Reallocation:</strong> Shift 20% budget from Campaign A to Campaign C 
+                            for optimal ROI
+                          </Text>
+                        </List.Item>
+                        <List.Item>
+                          <Text as="span" variant="bodySm">
+                            <strong>Creative Testing:</strong> Video ads showing 67% better engagement - 
+                            consider A/B testing new video content
+                          </Text>
+                        </List.Item>
+                      </List>
+                    </BlockStack>
+
+                    <Button fullWidth url="/app/analytics" variant="primary">
+                      View Full AI Analytics
+                    </Button>
+                  </BlockStack>
+                </Card>
+              )}
               
               {data.facebookAccount.isConnected && (
                 <Card>

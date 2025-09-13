@@ -44,6 +44,7 @@ model FacebookAccount {
   updatedAt         DateTime  @updatedAt
   campaigns         Campaign[]
   adAccounts        AdAccount[]
+  pages             FacebookPage[]
   
   @@unique([shop, facebookUserId])
 }
@@ -62,6 +63,35 @@ model AdAccount {
   updatedAt         DateTime        @updatedAt
   
   @@unique([facebookAccountId, adAccountId])
+}
+
+model FacebookPage {
+  id                String          @id @default(cuid())
+  facebookAccountId String
+  facebookAccount   FacebookAccount @relation(fields: [facebookAccountId], references: [id], onDelete: Cascade)
+  pageId            String
+  name              String
+  accessToken       String
+  category          String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  instagramAccounts InstagramAccount[]
+  
+  @@unique([facebookAccountId, pageId])
+}
+
+model InstagramAccount {
+  id                String       @id @default(cuid())
+  facebookPageId    String
+  facebookPage      FacebookPage @relation(fields: [facebookPageId], references: [id], onDelete: Cascade)
+  instagramId       String
+  name              String?
+  username          String
+  profilePictureUrl String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  
+  @@unique([facebookPageId, instagramId])
 }
 
 model Campaign {

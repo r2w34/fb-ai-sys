@@ -32,11 +32,16 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session, admin } = await authenticate.admin(request);
   const shop = session.shop;
 
-  // Check Facebook connection and get ad accounts
+  // Check Facebook connection and get ad accounts, pages, and Instagram accounts
   const facebookAccount = await db.facebookAccount.findFirst({
     where: { shop, isActive: true },
     include: {
       adAccounts: true,
+      pages: {
+        include: {
+          instagramAccounts: true,
+        },
+      },
     },
   });
 
@@ -77,6 +82,15 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const productsData = await productsResponse.json();
   const products = productsData.data?.products?.nodes || [];
 
+  // Flatten Instagram accounts for easier selection
+  const instagramAccounts = facebookAccount.pages.flatMap(page => 
+    page.instagramAccounts.map(ig => ({
+      ...ig,
+      pageId: page.pageId,
+      pageName: page.name,
+    }))
+  );
+
   return json({
     shop,
     facebookAccount: {
@@ -85,6 +99,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       adAccountId: facebookAccount.adAccountId,
     },
     adAccounts: facebookAccount.adAccounts,
+    pages: facebookAccount.pages,
+    instagramAccounts,
     products,
   });
 };
@@ -244,6 +260,10 @@ export default function NewCampaign() {
     "USD"
   );
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+  const [selectedPage, setSelectedPage] = useState(data.pages[0]?.pageId || "");
+  const [selectedInstagramAccount, setSelectedInstagramAccount] = useState(
+    data.instagramAccounts[0]?.instagramId || ""
+  );
   const [targetAudience, setTargetAudience] = useState("");
   const [tone, setTone] = useState("professional");
   const [generatedAdCopy, setGeneratedAdCopy] = useState<any>(null);
@@ -366,6 +386,38 @@ export default function NewCampaign() {
                       }
                     }}
                     helpText={`Currency will be automatically set to ${currency}`}
+                  />
+                )}
+
+                {data.pages.length > 0 && (
+                  <Select
+                    label="Facebook Page"
+                    options={[
+                      { label: 'Select Facebook page', value: '' },
+                      ...data.pages.map(page => ({
+                        label: page.name,
+                        value: page.pageId,
+                      }))
+                    ]}
+                    value={selectedPage}
+                    onChange={setSelectedPage}
+                    helpText="Select the Facebook page to publish ads from"
+                  />
+                )}
+
+                {data.instagramAccounts.length > 0 && (
+                  <Select
+                    label="Instagram Account"
+                    options={[
+                      { label: 'Select Instagram account (optional)', value: '' },
+                      ...data.instagramAccounts.map(ig => ({
+                        label: `@${ig.username} (${ig.pageName})`,
+                        value: ig.instagramId,
+                      }))
+                    ]}
+                    value={selectedInstagramAccount}
+                    onChange={setSelectedInstagramAccount}
+                    helpText="Optional: Select Instagram account for cross-platform advertising"
                   />
                 )}
 

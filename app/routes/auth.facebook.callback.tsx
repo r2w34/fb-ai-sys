@@ -211,6 +211,50 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       console.warn("Could not fetch business/ad account info:", businessError);
     }
 
+    // Get Facebook pages
+    let pages = [];
+    try {
+      console.log('Fetching Facebook pages...');
+      const pagesResponse = await axios.get(`https://graph.facebook.com/v18.0/${userData.id}/accounts`, {
+        params: {
+          access_token: access_token,
+          fields: "id,name,access_token,category,instagram_business_account"
+        }
+      });
+
+      console.log('Pages response:', pagesResponse.data);
+      pages = pagesResponse.data.data || [];
+    } catch (pagesError) {
+      console.warn("Could not fetch Facebook pages:", pagesError);
+    }
+
+    // Get Instagram accounts from pages
+    let instagramAccounts = [];
+    try {
+      console.log('Fetching Instagram accounts...');
+      for (const page of pages) {
+        if (page.instagram_business_account) {
+          const igResponse = await axios.get(`https://graph.facebook.com/v18.0/${page.instagram_business_account.id}`, {
+            params: {
+              access_token: page.access_token,
+              fields: "id,name,username,profile_picture_url"
+            }
+          });
+          
+          if (igResponse.data) {
+            instagramAccounts.push({
+              ...igResponse.data,
+              pageId: page.id,
+              pageName: page.name
+            });
+          }
+        }
+      }
+      console.log('Instagram accounts:', instagramAccounts);
+    } catch (igError) {
+      console.warn("Could not fetch Instagram accounts:", igError);
+    }
+
     // Store Facebook account in database
     console.log('Storing Facebook account in database...');
     console.log('Database data:', {
@@ -271,6 +315,66 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       }
       
       console.log(`Stored ${adAccounts.length} ad accounts`);
+    }
+
+    // Store Facebook pages
+    if (pages.length > 0) {
+      console.log('Storing Facebook pages...');
+      
+      // Delete existing pages for this Facebook account
+      await db.facebookPage.deleteMany({
+        where: { facebookAccountId: facebookAccount.id }
+      });
+
+      // Create new pages
+      for (const page of pages) {
+        await db.facebookPage.create({
+          data: {
+            facebookAccountId: facebookAccount.id,
+            pageId: page.id,
+            name: page.name,
+            accessToken: page.access_token,
+            category: page.category || null,
+          }
+        });
+      }
+      
+      console.log(`Stored ${pages.length} Facebook pages`);
+    }
+
+    // Store Instagram accounts
+    if (instagramAccounts.length > 0) {
+      console.log('Storing Instagram accounts...');
+      
+      for (const igAccount of instagramAccounts) {
+        // Find the corresponding Facebook page
+        const facebookPage = await db.facebookPage.findFirst({
+          where: {
+            facebookAccountId: facebookAccount.id,
+            pageId: igAccount.pageId
+          }
+        });
+
+        if (facebookPage) {
+          // Delete existing Instagram accounts for this page
+          await db.instagramAccount.deleteMany({
+            where: { facebookPageId: facebookPage.id }
+          });
+
+          // Create new Instagram account
+          await db.instagramAccount.create({
+            data: {
+              facebookPageId: facebookPage.id,
+              instagramId: igAccount.id,
+              name: igAccount.name || null,
+              username: igAccount.username,
+              profilePictureUrl: igAccount.profile_picture_url || null,
+            }
+          });
+        }
+      }
+      
+      console.log(`Stored ${instagramAccounts.length} Instagram accounts`);
     }
 
     // Always return a page that checks if it's in a popup context
