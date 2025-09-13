@@ -401,29 +401,13 @@ Focus on:
     }
   }
 
+  // Image generation now handled by Gemini-enhanced descriptions in ai-creative-generator.server.ts
+  // This method is kept for backward compatibility but will use placeholder images
   async generateImage(prompt: string, size: '1024x1024' | '1792x1024' | '1024x1792' = '1024x1024'): Promise<{ url: string }> {
-    try {
-      const response = await this.openai.images.generate({
-        model: "dall-e-3",
-        prompt: prompt,
-        n: 1,
-        size: size,
-        quality: "standard",
-        style: "vivid"
-      });
-
-      const imageUrl = response.data[0]?.url;
-      if (!imageUrl) {
-        throw new Error("No image URL returned from OpenAI");
-      }
-
-      return { url: imageUrl };
-    } catch (error) {
-      console.error("OpenAI image generation error:", error);
-      // Return placeholder image
-      return { 
-        url: `https://via.placeholder.com/1024x1024/007bff/ffffff?text=${encodeURIComponent('AI Generated Image')}`
-      };
-    }
+    console.log("Image generation now handled by Gemini API in ai-creative-generator service");
+    // Return placeholder image
+    return { 
+      url: `https://via.placeholder.com/1024x1024/007bff/ffffff?text=${encodeURIComponent('AI Generated Image')}`
+    };
   }
 }

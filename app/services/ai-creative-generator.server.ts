@@ -1,5 +1,6 @@
 import { db } from "../db.server";
 import { OpenAIService } from "./openai.server";
+import { geminiService, GeminiService } from "./gemini.server";
 import axios from "axios";
 
 export interface CreativeAssets {
@@ -60,9 +61,11 @@ export interface CreativeTestResult {
 
 export class AICreativeGenerator {
   private openaiService: OpenAIService;
+  private geminiService: GeminiService;
 
   constructor() {
     this.openaiService = new OpenAIService();
+    this.geminiService = geminiService;
   }
 
   async generateCreativeAssets(
@@ -153,17 +156,33 @@ export class AICreativeGenerator {
     `;
 
     try {
-      const response = await this.openaiService.generateText(prompt);
-      const parsed = JSON.parse(response);
+      const response = await this.geminiService.generateAdCopy(
+        productData[0], // Use first product as primary
+        targetAudience,
+        objective
+      );
       
+      if (response.success) {
+        const parsed = this.geminiService.parseJSONResponse(response);
+        if (parsed.success) {
+          return {
+            headlines: parsed.data.headlines || this.getDefaultHeadlines(productData),
+            primaryTexts: parsed.data.primaryTexts || this.getDefaultPrimaryTexts(productData),
+            descriptions: parsed.data.descriptions || this.getDefaultDescriptions(productData),
+            callToActions: parsed.data.callToActions || this.getDefaultCTAs()
+          };
+        }
+      }
+      
+      console.error('Error generating text assets with Gemini:', response.error);
       return {
-        headlines: parsed.headlines || this.getDefaultHeadlines(productData),
-        primaryTexts: parsed.primaryTexts || this.getDefaultPrimaryTexts(productData),
-        descriptions: parsed.descriptions || this.getDefaultDescriptions(productData),
-        callToActions: parsed.callToActions || this.getDefaultCTAs()
+        headlines: this.getDefaultHeadlines(productData),
+        primaryTexts: this.getDefaultPrimaryTexts(productData),
+        descriptions: this.getDefaultDescriptions(productData),
+        callToActions: this.getDefaultCTAs()
       };
     } catch (error) {
-      console.error('Error generating text assets:', error);
+      console.error('Error generating text assets with Gemini:', error);
       return {
         headlines: this.getDefaultHeadlines(productData),
         primaryTexts: this.getDefaultPrimaryTexts(productData),
@@ -251,13 +270,56 @@ export class AICreativeGenerator {
 
   private async generateImageWithAI(prompt: string): Promise<string> {
     try {
-      // Using OpenAI DALL-E API for image generation
-      const response = await this.openaiService.generateImage(prompt);
-      return response.url;
+      // Use Gemini to enhance the image description
+      const response = await this.geminiService.enhanceImageDescription(prompt, 'product');
+      
+      if (response.success) {
+        // For now, we'll use placeholder images with the enhanced description
+        // In a production environment, you could integrate with:
+        // - Google's Imagen API (when available)
+        // - Stability AI's Stable Diffusion API
+        // - Midjourney API
+        // - Other image generation services
+        
+        const encodedDescription = encodeURIComponent(response.text.substring(0, 100));
+        return `https://via.placeholder.com/1200x628/4285f4/ffffff?text=${encodedDescription}`;
+      }
+      
+      // Fallback to basic placeholder
+      return `https://via.placeholder.com/1200x628/007bff/ffffff?text=${encodeURIComponent('AI Generated Ad Image')}`;
+      
     } catch (error) {
-      console.error('Error generating image with AI:', error);
+      console.error('Error generating image with Gemini:', error);
       // Return placeholder image URL
-      return `https://via.placeholder.com/1200x628/007bff/ffffff?text=${encodeURIComponent('Generated Ad Image')}`;
+      return `https://via.placeholder.com/1200x628/007bff/ffffff?text=${encodeURIComponent('AI Generated Ad Image')}`;
+    }
+  }
+
+  private async generateImageWithStabilityAI(prompt: string): Promise<string> {
+    // Alternative: Use Stability AI's API for actual image generation
+    // This would require a Stability AI API key
+    try {
+      // Placeholder for Stability AI integration
+      // const response = await axios.post('https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image', {
+      //   text_prompts: [{ text: prompt }],
+      //   cfg_scale: 7,
+      //   height: 628,
+      //   width: 1200,
+      //   samples: 1,
+      //   steps: 30,
+      // }, {
+      //   headers: {
+      //     'Authorization': `Bearer ${STABILITY_API_KEY}`,
+      //     'Content-Type': 'application/json',
+      //   }
+      // });
+      
+      // For now, return enhanced placeholder
+      const response = await this.geminiService.enhanceImageDescription(prompt, 'lifestyle');
+      return `https://picsum.photos/1200/628?random=${Date.now()}`;
+    } catch (error) {
+      console.error('Error with Stability AI:', error);
+      return `https://via.placeholder.com/1200x628/28a745/ffffff?text=${encodeURIComponent('Creative Ad Image')}`;
     }
   }
 

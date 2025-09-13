@@ -2,6 +2,11 @@ import { db } from "../db.server";
 import { OpenAIService } from "./openai.server";
 import { FacebookAdsService } from "./facebook.server";
 import { MachineLearningService } from "./machine-learning.server";
+import axios from "axios";
+
+// Gemini API configuration
+const GEMINI_API_KEY = "AIzaSyCOLsr0_ADY0Lsgs1Vl9TZattNpLBwyGlQ";
+const GEMINI_TEXT_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
 
 export interface FunnelStage {
   name: string;
@@ -57,6 +62,37 @@ export class AIFunnelService {
   constructor() {
     this.openaiService = new OpenAIService();
     this.mlService = new MachineLearningService();
+  }
+
+  private async generateWithGemini(prompt: string): Promise<string> {
+    try {
+      const response = await axios.post(
+        `${GEMINI_TEXT_API_URL}?key=${GEMINI_API_KEY}`,
+        {
+          contents: [{
+            parts: [{
+              text: prompt
+            }]
+          }],
+          generationConfig: {
+            temperature: 0.7,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: 2048,
+          }
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        }
+      );
+
+      return response.data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    } catch (error) {
+      console.error('Gemini API error:', error);
+      return "";
+    }
   }
 
   async createAIFunnel(
@@ -128,13 +164,13 @@ export class AIFunnelService {
     Format as JSON with detailed targeting recommendations.
     `;
 
-    const aiResponse = await this.openaiService.generateText(prompt);
+    const aiResponse = await this.generateWithGemini(prompt);
     
     try {
       const aiStages = JSON.parse(aiResponse);
       return this.processAIStages(aiStages, totalBudget, productData);
     } catch (error) {
-      console.error('Error parsing AI funnel response:', error);
+      console.error('Error parsing AI funnel response from Gemini:', error);
       return this.getDefaultFunnelStages(totalBudget, category);
     }
   }

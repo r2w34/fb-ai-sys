@@ -2,6 +2,11 @@ import { db } from "../db.server";
 import { OpenAIService } from "./openai.server";
 import { AnalyticsDashboardService } from "./analytics-dashboard.server";
 import { MachineLearningService } from "./machine-learning.server";
+import axios from "axios";
+
+// Gemini API configuration
+const GEMINI_API_KEY = "AIzaSyCOLsr0_ADY0Lsgs1Vl9TZattNpLBwyGlQ";
+const GEMINI_TEXT_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
 
 export interface GrowthTip {
   id: string;
@@ -133,6 +138,37 @@ export class GrowthTipsService {
     this.mlService = new MachineLearningService();
   }
 
+  private async generateWithGemini(prompt: string): Promise<string> {
+    try {
+      const response = await axios.post(
+        `${GEMINI_TEXT_API_URL}?key=${GEMINI_API_KEY}`,
+        {
+          contents: [{
+            parts: [{
+              text: prompt
+            }]
+          }],
+          generationConfig: {
+            temperature: 0.8,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: 2048,
+          }
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        }
+      );
+
+      return response.data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    } catch (error) {
+      console.error('Gemini API error:', error);
+      return "";
+    }
+  }
+
   async generatePersonalizedGrowthTips(
     shop: string,
     limit: number = 10
@@ -201,7 +237,7 @@ export class GrowthTipsService {
     `;
 
     try {
-      const response = await this.openaiService.generateText(prompt);
+      const response = await this.generateWithGemini(prompt);
       const aiTips = JSON.parse(response);
       
       return aiTips.map((tip: any, index: number) => ({
@@ -215,7 +251,7 @@ export class GrowthTipsService {
         priority: 10 - index // Higher priority for first tips
       }));
     } catch (error) {
-      console.error('Error generating AI tips:', error);
+      console.error('Error generating AI tips with Gemini:', error);
       return [];
     }
   }

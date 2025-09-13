@@ -23,13 +23,13 @@ import {
   BlockStack
 } from "@shopify/polaris";
 import {
-  TrendingUpIcon,
-  TrendingDownIcon,
-  ChartBarIcon,
-  LightBulbIcon,
-  CogIcon,
+  ArrowUpIcon,
+  ArrowDownIcon,
+  ChartVerticalIcon,
+  LightbulbIcon,
+  SettingsIcon,
   PlayIcon,
-  PauseIcon,
+  PauseCircleIcon,
   RefreshIcon
 } from "@shopify/polaris-icons";
 
@@ -117,8 +117,8 @@ export default function AIDashboard() {
   const formatPercentage = (value: number) => `${value.toFixed(1)}%`;
 
   const getTrendIcon = (value: number) => {
-    if (value > 0) return <Icon source={TrendingUpIcon} tone="success" />;
-    if (value < 0) return <Icon source={TrendingDownIcon} tone="critical" />;
+    if (value > 0) return <Icon source={ArrowUpIcon} tone="success" />;
+    if (value < 0) return <Icon source={ArrowDownIcon} tone="critical" />;
     return null;
   };
 
@@ -152,7 +152,7 @@ export default function AIDashboard() {
         },
         {
           content: "Settings",
-          icon: CogIcon,
+          icon: SettingsIcon,
           onAction: () => {
             // Navigate to settings
           }
@@ -272,10 +272,10 @@ export default function AIDashboard() {
                 <Button variant="primary" icon={PlayIcon}>
                   Optimize Now
                 </Button>
-                <Button icon={PauseIcon}>
+                <Button icon={PauseCircleIcon}>
                   Pause Optimization
                 </Button>
-                <Button icon={CogIcon}>
+                <Button icon={SettingsIcon}>
                   Settings
                 </Button>
               </InlineStack>
@@ -365,7 +365,7 @@ export default function AIDashboard() {
             <BlockStack gap="400">
               <InlineStack align="space-between">
                 <Text as="h2" variant="headingLg">AI Growth Tips</Text>
-                <Button icon={LightBulbIcon}>View All Tips</Button>
+                <Button icon={LightbulbIcon}>View All Tips</Button>
               </InlineStack>
 
               <Grid>
