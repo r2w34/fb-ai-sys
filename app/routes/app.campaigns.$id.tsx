@@ -50,6 +50,19 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   });
 
   if (!campaign) {
+    // For debugging: check if campaign exists for any shop
+    const campaignAnyShop = await db.campaign.findFirst({
+      where: { id: campaignId },
+      select: { id: true, shop: true, name: true }
+    });
+    
+    if (campaignAnyShop) {
+      throw new Response(
+        `Campaign found but belongs to different shop. Current shop: ${shop}, Campaign shop: ${campaignAnyShop.shop}`, 
+        { status: 403 }
+      );
+    }
+    
     throw new Response("Campaign not found", { status: 404 });
   }
 
@@ -131,15 +144,15 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 const getStatusBadge = (status: string) => {
   switch (status) {
     case 'ACTIVE':
-      return <Badge tone="success">Active</Badge>;
+      return { tone: "success" as const, text: "Active" };
     case 'PAUSED':
-      return <Badge tone="warning">Paused</Badge>;
+      return { tone: "warning" as const, text: "Paused" };
     case 'COMPLETED':
-      return <Badge tone="info">Completed</Badge>;
+      return { tone: "info" as const, text: "Completed" };
     case 'DELETED':
-      return <Badge tone="critical">Deleted</Badge>;
+      return { tone: "critical" as const, text: "Deleted" };
     default:
-      return <Badge>Draft</Badge>;
+      return { tone: undefined, text: "Draft" };
   }
 };
 
@@ -190,14 +203,17 @@ export default function CampaignDetail() {
   const cpc = data.campaign.clicks > 0 ? (data.campaign.spend / data.campaign.clicks) : 0;
 
   // Prepare ads data for table
-  const adsTableData = data.campaign.ads.map(ad => [
-    ad.name,
-    getStatusBadge(ad.status),
-    formatCurrency(ad.spend || 0),
-    (ad.clicks || 0).toLocaleString(),
-    ad.impressions ? `${((ad.clicks || 0) / ad.impressions * 100).toFixed(2)}%` : '0%',
-    formatDate(ad.createdAt),
-  ]);
+  const adsTableData = data.campaign.ads.map(ad => {
+    const statusBadge = getStatusBadge(ad.status);
+    return [
+      ad.name,
+      <Badge tone={statusBadge.tone}>{statusBadge.text}</Badge>,
+      formatCurrency(ad.spend || 0),
+      (ad.clicks || 0).toLocaleString(),
+      ad.impressions ? `${((ad.clicks || 0) / ad.impressions * 100).toFixed(2)}%` : '0%',
+      formatDate(ad.createdAt),
+    ];
+  });
 
   const objectiveOptions = [
     { label: 'Traffic', value: 'LINK_CLICKS' },
@@ -329,7 +345,10 @@ export default function CampaignDetail() {
                   <BlockStack gap="300">
                     <InlineStack gap="400">
                       <Text as="span"><strong>Status:</strong></Text>
-                      {getStatusBadge(data.campaign.status)}
+                      {(() => {
+                        const statusBadge = getStatusBadge(data.campaign.status);
+                        return <Badge tone={statusBadge.tone}>{statusBadge.text}</Badge>;
+                      })()}
                     </InlineStack>
                     
                     <Text as="p">
