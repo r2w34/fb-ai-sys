@@ -379,4 +379,51 @@ Focus on:
       ]
     };
   }
+
+  async generateText(prompt: string): Promise<string> {
+    try {
+      const completion = await this.openai.chat.completions.create({
+        model: "gpt-4",
+        messages: [
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 1000,
+      });
+
+      return completion.choices[0]?.message?.content || "";
+    } catch (error) {
+      console.error("OpenAI text generation error:", error);
+      return "";
+    }
+  }
+
+  async generateImage(prompt: string, size: '1024x1024' | '1792x1024' | '1024x1792' = '1024x1024'): Promise<{ url: string }> {
+    try {
+      const response = await this.openai.images.generate({
+        model: "dall-e-3",
+        prompt: prompt,
+        n: 1,
+        size: size,
+        quality: "standard",
+        style: "vivid"
+      });
+
+      const imageUrl = response.data[0]?.url;
+      if (!imageUrl) {
+        throw new Error("No image URL returned from OpenAI");
+      }
+
+      return { url: imageUrl };
+    } catch (error) {
+      console.error("OpenAI image generation error:", error);
+      // Return placeholder image
+      return { 
+        url: `https://via.placeholder.com/1024x1024/007bff/ffffff?text=${encodeURIComponent('AI Generated Image')}`
+      };
+    }
+  }
 }

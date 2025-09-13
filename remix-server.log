@@ -1,0 +1,5 @@
+npm error Missing script: "remix:dev"
+npm error
+npm error To see a list of scripts, run:
+npm error   npm run
+npm error A complete log of this run can be found in: /root/.npm/_logs/2025-09-13T22_10_53_926Z-debug-0.log

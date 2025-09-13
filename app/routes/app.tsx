@@ -24,6 +24,7 @@ export default function App() {
         <Link to="/app" rel="home">
           Dashboard
         </Link>
+        <Link to="/app/ai-dashboard">AI Dashboard</Link>
         <Link to="/app/campaigns/new">Create Campaign</Link>
         <Link to="/app/campaigns">Campaigns</Link>
         <Link to="/app/analytics">Analytics</Link>
