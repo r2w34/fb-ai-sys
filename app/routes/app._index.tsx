@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { useLoaderData, useFetcher } from "@remix-run/react";
 import {
   Page,
@@ -90,22 +90,34 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData();
   const action = formData.get("action");
 
-  if (action === "connect_facebook") {
-    // This would typically redirect to Facebook OAuth
-    // For now, we'll simulate a connection
-    return json({ 
-      success: true, 
-      message: "Facebook connection initiated. Please complete OAuth flow." 
-    });
-  }
+
 
   if (action === "sync_campaigns") {
     // Sync campaigns from Facebook
-    // This would call Facebook API to get latest campaign data
-    return json({ 
-      success: true, 
-      message: "Campaign sync completed." 
-    });
+    const { FacebookAdsService } = await import("../services/facebook.server");
+    
+    try {
+      const facebookService = await FacebookAdsService.getForShop(shop);
+      if (!facebookService) {
+        return json({ 
+          success: false, 
+          message: "Facebook account not connected." 
+        });
+      }
+
+      await facebookService.syncCampaigns(shop);
+      
+      return json({ 
+        success: true, 
+        message: "Campaign sync completed successfully." 
+      });
+    } catch (error: any) {
+      console.error("Campaign sync error:", error);
+      return json({ 
+        success: false, 
+        message: "Campaign sync failed. Please try again." 
+      });
+    }
   }
 
   return json({ success: false, message: "Unknown action" });
@@ -125,7 +137,59 @@ export default function Index() {
   }, [fetcher.data, shopify]);
 
   const connectFacebook = () => {
-    fetcher.submit({ action: "connect_facebook" }, { method: "POST" });
+    // Open Facebook auth in a popup window
+    const facebookAppId = process.env.FACEBOOK_APP_ID || "342313695281811";
+    const redirectUri = encodeURIComponent("https://fbai-app.trustclouds.in/auth/facebook/callback");
+    const state = btoa(JSON.stringify({ shop: data.shop, popup: true }));
+    
+    const facebookAuthUrl = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${facebookAppId}&redirect_uri=${redirectUri}&state=${state}&scope=ads_management,ads_read,business_management,pages_read_engagement&response_type=code&popup=true`;
+    
+    // Open popup window
+    const popup = window.open(
+      facebookAuthUrl,
+      'facebook-auth',
+      'width=600,height=700,scrollbars=yes,resizable=yes'
+    );
+    
+    // Listen for popup completion
+    const checkClosed = setInterval(() => {
+      if (popup?.closed) {
+        clearInterval(checkClosed);
+        // Reload the page to refresh the connection status
+        window.location.reload();
+      }
+    }, 1000);
+    
+    // Handle message from popup
+    const handleMessage = (event: MessageEvent) => {
+      console.log('Received message from popup:', event.data, 'Origin:', event.origin);
+      
+      // Accept messages from our domain
+      if (event.origin !== window.location.origin && event.origin !== 'https://fbai-app.trustclouds.in') {
+        console.log('Ignoring message from unknown origin:', event.origin);
+        return;
+      }
+      
+      if (event.data && event.data.type === 'FACEBOOK_AUTH_SUCCESS') {
+        console.log('Facebook auth success received');
+        clearInterval(checkClosed);
+        popup?.close();
+        window.removeEventListener('message', handleMessage);
+        shopify.toast.show('Facebook account connected successfully!');
+        // Reload to refresh the UI
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
+      } else if (event.data && event.data.type === 'FACEBOOK_AUTH_ERROR') {
+        console.log('Facebook auth error received');
+        clearInterval(checkClosed);
+        popup?.close();
+        window.removeEventListener('message', handleMessage);
+        shopify.toast.show('Failed to connect Facebook account. Please try again.', { isError: true });
+      }
+    };
+    
+    window.addEventListener('message', handleMessage);
   };
 
   const syncCampaigns = () => {
