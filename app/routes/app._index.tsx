@@ -42,9 +42,15 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session } = await authenticate.admin(request);
   const shop = session.shop;
 
-  // Get Facebook account status
+  // Get Facebook account status with ad accounts
   const facebookAccount = await db.facebookAccount.findFirst({
     where: { shop, isActive: true },
+    include: {
+      adAccounts: {
+        where: { isDefault: true },
+        take: 1
+      }
+    }
   });
 
   // Get campaigns summary

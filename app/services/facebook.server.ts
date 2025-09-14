@@ -1,6 +1,66 @@
 import axios from "axios";
 import { db } from "../db.server";
 
+// Helper function to get Facebook account status
+export async function getFacebookAccountStatus(shop: string) {
+  const facebookAccount = await db.facebookAccount.findFirst({
+    where: { shop, isActive: true },
+    include: {
+      adAccounts: {
+        where: { isDefault: true },
+        take: 1
+      }
+    }
+  });
+
+  return {
+    isConnected: !!facebookAccount,
+    account: facebookAccount,
+    defaultAdAccount: facebookAccount?.adAccounts[0] || null,
+    currency: facebookAccount?.adAccounts[0]?.currency || 'USD'
+  };
+}
+
+// Helper function to get available ad accounts
+export async function getAvailableAdAccounts(shop: string) {
+  const facebookAccount = await db.facebookAccount.findFirst({
+    where: { shop, isActive: true },
+    include: {
+      adAccounts: {
+        orderBy: { isDefault: 'desc' }
+      }
+    }
+  });
+
+  return facebookAccount?.adAccounts || [];
+}
+
+// Helper function to format currency
+export function formatCurrency(amount: string | number, currencyCode: string): string {
+  const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+  
+  if (isNaN(numAmount)) return '0';
+
+  const currencySymbols: { [key: string]: string } = {
+    'USD': '$',
+    'EUR': '€',
+    'GBP': '£',
+    'JPY': '¥',
+    'CAD': 'C$',
+    'AUD': 'A$',
+    'INR': '₹',
+    'BRL': 'R$',
+    'MXN': 'MX$'
+  };
+
+  const symbol = currencySymbols[currencyCode] || currencyCode;
+  
+  return `${symbol}${numAmount.toLocaleString('en-US', { 
+    minimumFractionDigits: 2, 
+    maximumFractionDigits: 2 
+  })}`;
+}
+
 export interface FacebookCampaignData {
   name: string;
   objective: string;

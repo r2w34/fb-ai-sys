@@ -129,7 +129,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     const tokenResponse = await axios.post("https://graph.facebook.com/v18.0/oauth/access_token", {
       client_id: process.env.FACEBOOK_APP_ID,
       client_secret: process.env.FACEBOOK_APP_SECRET,
-      redirect_uri: "https://fbai-app.trustclouds.in/auth/facebook/callback",
+      redirect_uri: "https://ainet.sellerai.in/auth/facebook/callback",
       code: code,
     });
     

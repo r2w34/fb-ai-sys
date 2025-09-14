@@ -29,6 +29,7 @@ export default function App() {
         <Link to="/app/campaigns">Campaigns</Link>
         <Link to="/app/analytics">Analytics</Link>
         <Link to="/app/performance-insights">AI Performance</Link>
+        <Link to="/app/facebook-settings">Facebook Settings</Link>
         <Link to="/app/subscription">Subscription</Link>
         <Link to="/app/ui-showcase">UI Showcase</Link>
       </NavMenu>
