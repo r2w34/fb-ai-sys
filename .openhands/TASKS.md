@@ -1,11 +1,13 @@
 # Task List
 
-1. ✅ 🔧 Fix Facebook login flow - connection status not showing
-Fixed Facebook callback redirect URI and connection status display
-2. ✅ 📊 Add multiple Facebook Ads accounts selection
-Created Facebook settings page with account selection dropdown and currency display
-3. ✅ 💰 Add currency support based on ads accounts
-Added currency formatting and display based on selected Facebook Ads account
-4. ✅ 🚀 Push fixes to GitHub and redeploy
-Successfully committed changes, pushed to main branch, and deployed to production
+1. ✅ 🔍 Deep diagnosis of Shopify embedded app issues
+Found 410 Gone error in app route - authentication issue identified
+2. 🔄 🔐 Fix Shopify App Bridge authentication flow
+Need to fix 410 error and implement proper session handling
+3. ⏳ 🧪 Test all app routes and features
+Test dashboard, Facebook settings, campaigns, analytics, and all navigation
+4. ⏳ 📘 Ensure Facebook integration works properly
+Test Facebook login, account selection, and settings page
+5. ⏳ 🚀 Commit fixes and deploy to production
+Push all fixes to GitHub and deploy to server
 
