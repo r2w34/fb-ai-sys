@@ -163,24 +163,24 @@ export default function App() {
             <div className={styles.footerSection}>
               <h3>Company</h3>
               <ul className={styles.footerLinks}>
-                <li><a href="/about">About Us</a></li>
-                <li><a href="/contact">Contact</a></li>
-                <li><a href="/help">Help & Support</a></li>
+                <li><a href="/public/about">About Us</a></li>
+                <li><a href="/public/contact">Contact</a></li>
+                <li><a href="/public/help">Help & Support</a></li>
               </ul>
             </div>
             <div className={styles.footerSection}>
               <h3>Legal</h3>
               <ul className={styles.footerLinks}>
-                <li><a href="/privacy-policy">Privacy Policy</a></li>
-                <li><a href="/terms-of-service">Terms of Service</a></li>
+                <li><a href="/public/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/public/terms-of-service">Terms of Service</a></li>
               </ul>
             </div>
             <div className={styles.footerSection}>
               <h3>Resources</h3>
               <ul className={styles.footerLinks}>
-                <li><a href="/help">Documentation</a></li>
-                <li><a href="/contact">Support</a></li>
-                <li><a href="/about">Case Studies</a></li>
+                <li><a href="/public/help">Documentation</a></li>
+                <li><a href="/public/contact">Support</a></li>
+                <li><a href="/public/about">Case Studies</a></li>
               </ul>
             </div>
             <div className={styles.footerSection}>
