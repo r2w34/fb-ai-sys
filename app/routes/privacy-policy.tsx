@@ -1,129 +1,136 @@
-import { json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
-import { Page, Layout, Card, Text, Divider } from "@shopify/polaris";
-
-export const loader = async () => {
-  return json({
-    lastUpdated: "December 17, 2024"
-  });
-};
+import PublicLayout from "../components/PublicLayout";
 
 export default function PrivacyPolicy() {
-  const { lastUpdated } = useLoaderData<typeof loader>();
-
   return (
-    <Page
-      title="Privacy Policy"
-      subtitle="How we collect, use, and protect your information"
-      backAction={{ content: "Back to Home", url: "/" }}
-    >
-      <Layout>
-        <Layout.Section>
-          <Card sectioned>
-            <div style={{ marginBottom: "1rem" }}>
-              <Text variant="bodyMd" color="subdued">
-                Last updated: {lastUpdated}
-              </Text>
-            </div>
-            
-            <Divider />
-            
-            <div style={{ marginTop: "1.5rem" }}>
-              <div style={{ marginBottom: "2rem" }}>
-                <div style={{ marginBottom: "1rem" }}>
-                  <Text variant="headingLg" as="h2">
-                    Information We Collect
-                  </Text>
-                </div>
-                <Text variant="bodyMd">
-                  We collect information you provide directly to us, such as when you create an account, 
-                  use our services, or contact us for support. This includes your Shopify store data, 
-                  Facebook Business Manager information, campaign performance data, and communication preferences.
-                </Text>
-              </div>
+    <PublicLayout title="Privacy Policy">
+      <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+        <div style={{ marginBottom: '2rem', padding: '1rem', background: '#e3f2fd', borderRadius: '8px' }}>
+          <p style={{ margin: 0, color: '#1565c0' }}>
+            <strong>Last updated:</strong> December 2024
+          </p>
+        </div>
 
-              <Divider />
+        <section style={{ marginBottom: '2rem' }}>
+          <h2 style={{ color: '#1c1e21', fontSize: '1.5rem', marginBottom: '1rem' }}>Introduction</h2>
+          <p style={{ color: '#65676b', lineHeight: '1.6' }}>
+            Facebook Ads Pro ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy 
+            explains how we collect, use, disclose, and safeguard your information when you use our service.
+          </p>
+        </section>
 
-              <div style={{ marginTop: "1.5rem", marginBottom: "2rem" }}>
-                <div style={{ marginBottom: "1rem" }}>
-                  <Text variant="headingLg" as="h2">
-                    How We Use Your Information
-                  </Text>
-                </div>
-                <Text variant="bodyMd">
-                  We use the information we collect to provide, maintain, and improve our services, 
-                  create and optimize Facebook ad campaigns, generate AI-powered content and recommendations, 
-                  provide customer support, send important service updates, and analyze usage patterns 
-                  to enhance our platform.
-                </Text>
-              </div>
+        <section style={{ marginBottom: '2rem' }}>
+          <h2 style={{ color: '#1c1e21', fontSize: '1.5rem', marginBottom: '1rem' }}>Information We Collect</h2>
+          
+          <h3 style={{ color: '#1c1e21', fontSize: '1.25rem', marginBottom: '0.5rem' }}>Personal Information</h3>
+          <ul style={{ color: '#65676b', lineHeight: '1.6', paddingLeft: '1.5rem' }}>
+            <li>Name and email address</li>
+            <li>Shopify store information</li>
+            <li>Facebook Business Manager account details</li>
+            <li>Payment and billing information</li>
+          </ul>
 
-              <Divider />
+          <h3 style={{ color: '#1c1e21', fontSize: '1.25rem', marginBottom: '0.5rem', marginTop: '1rem' }}>Usage Data</h3>
+          <ul style={{ color: '#65676b', lineHeight: '1.6', paddingLeft: '1.5rem' }}>
+            <li>Campaign performance metrics</li>
+            <li>Product catalog information</li>
+            <li>User interactions with our platform</li>
+            <li>Technical data (IP address, browser type, device information)</li>
+          </ul>
+        </section>
 
-              <div style={{ marginTop: "1.5rem", marginBottom: "2rem" }}>
-                <div style={{ marginBottom: "1rem" }}>
-                  <Text variant="headingLg" as="h2">
-                    Information Sharing
-                  </Text>
-                </div>
-                <Text variant="bodyMd">
-                  We do not sell, trade, or otherwise transfer your personal information to third parties 
-                  without your consent, except as described in this policy. We may share information with 
-                  Facebook/Meta for advertising purposes, Shopify for store integration, trusted service 
-                  providers who assist in our operations, and when required by law or to protect our rights.
-                </Text>
-              </div>
+        <section style={{ marginBottom: '2rem' }}>
+          <h2 style={{ color: '#1c1e21', fontSize: '1.5rem', marginBottom: '1rem' }}>How We Use Your Information</h2>
+          <ul style={{ color: '#65676b', lineHeight: '1.6', paddingLeft: '1.5rem' }}>
+            <li>Provide and maintain our advertising optimization service</li>
+            <li>Generate AI-powered campaign recommendations</li>
+            <li>Process payments and manage subscriptions</li>
+            <li>Communicate with you about your account and campaigns</li>
+            <li>Improve our service through analytics and machine learning</li>
+            <li>Comply with legal obligations</li>
+          </ul>
+        </section>
 
-              <Divider />
+        <section style={{ marginBottom: '2rem' }}>
+          <h2 style={{ color: '#1c1e21', fontSize: '1.5rem', marginBottom: '1rem' }}>Data Sharing and Disclosure</h2>
+          <p style={{ color: '#65676b', lineHeight: '1.6', marginBottom: '1rem' }}>
+            We do not sell, trade, or rent your personal information to third parties. We may share your information in the following circumstances:
+          </p>
+          <ul style={{ color: '#65676b', lineHeight: '1.6', paddingLeft: '1.5rem' }}>
+            <li><strong>Service Providers:</strong> With trusted third-party services that help us operate our platform</li>
+            <li><strong>Facebook/Meta:</strong> Campaign data necessary for ad delivery and optimization</li>
+            <li><strong>Legal Requirements:</strong> When required by law or to protect our rights</li>
+            <li><strong>Business Transfers:</strong> In connection with mergers, acquisitions, or asset sales</li>
+          </ul>
+        </section>
 
-              <div style={{ marginTop: "1.5rem", marginBottom: "2rem" }}>
-                <div style={{ marginBottom: "1rem" }}>
-                  <Text variant="headingLg" as="h2">
-                    Data Security
-                  </Text>
-                </div>
-                <Text variant="bodyMd">
-                  We implement appropriate technical and organizational security measures to protect your 
-                  personal information against unauthorized access, alteration, disclosure, or destruction. 
-                  This includes encryption of data in transit and at rest, regular security assessments, 
-                  access controls and authentication, and secure data storage practices.
-                </Text>
-              </div>
+        <section style={{ marginBottom: '2rem' }}>
+          <h2 style={{ color: '#1c1e21', fontSize: '1.5rem', marginBottom: '1rem' }}>Data Security</h2>
+          <p style={{ color: '#65676b', lineHeight: '1.6' }}>
+            We implement industry-standard security measures to protect your information, including:
+          </p>
+          <ul style={{ color: '#65676b', lineHeight: '1.6', paddingLeft: '1.5rem' }}>
+            <li>SSL/TLS encryption for data transmission</li>
+            <li>Encrypted data storage</li>
+            <li>Regular security audits and monitoring</li>
+            <li>Access controls and authentication</li>
+            <li>Secure API integrations with Facebook and Shopify</li>
+          </ul>
+        </section>
 
-              <Divider />
+        <section style={{ marginBottom: '2rem' }}>
+          <h2 style={{ color: '#1c1e21', fontSize: '1.5rem', marginBottom: '1rem' }}>Your Rights (GDPR Compliance)</h2>
+          <p style={{ color: '#65676b', lineHeight: '1.6', marginBottom: '1rem' }}>
+            If you are a resident of the European Union, you have the following rights:
+          </p>
+          <ul style={{ color: '#65676b', lineHeight: '1.6', paddingLeft: '1.5rem' }}>
+            <li><strong>Access:</strong> Request copies of your personal data</li>
+            <li><strong>Rectification:</strong> Request correction of inaccurate data</li>
+            <li><strong>Erasure:</strong> Request deletion of your personal data</li>
+            <li><strong>Portability:</strong> Request transfer of your data</li>
+            <li><strong>Objection:</strong> Object to processing of your data</li>
+            <li><strong>Restriction:</strong> Request restriction of processing</li>
+          </ul>
+        </section>
 
-              <div style={{ marginTop: "1.5rem", marginBottom: "2rem" }}>
-                <div style={{ marginBottom: "1rem" }}>
-                  <Text variant="headingLg" as="h2">
-                    Your Rights
-                  </Text>
-                </div>
-                <Text variant="bodyMd">
-                  You have the right to access, update, or delete your personal information, opt-out of 
-                  certain communications, request data portability, and withdraw consent where applicable. 
-                  For EU residents, you have additional rights under GDPR including the right to rectification, 
-                  erasure, and data portability.
-                </Text>
-              </div>
+        <section style={{ marginBottom: '2rem' }}>
+          <h2 style={{ color: '#1c1e21', fontSize: '1.5rem', marginBottom: '1rem' }}>Data Retention</h2>
+          <p style={{ color: '#65676b', lineHeight: '1.6' }}>
+            We retain your personal information only as long as necessary to provide our services and comply with legal obligations. 
+            Campaign data is typically retained for 2 years for optimization purposes. You may request deletion of your data at any time.
+          </p>
+        </section>
 
-              <Divider />
+        <section style={{ marginBottom: '2rem' }}>
+          <h2 style={{ color: '#1c1e21', fontSize: '1.5rem', marginBottom: '1rem' }}>Cookies and Tracking</h2>
+          <p style={{ color: '#65676b', lineHeight: '1.6' }}>
+            We use cookies and similar technologies to enhance your experience, analyze usage, and improve our service. 
+            You can control cookie settings through your browser preferences.
+          </p>
+        </section>
 
-              <div style={{ marginTop: "1.5rem" }}>
-                <div style={{ marginBottom: "1rem" }}>
-                  <Text variant="headingLg" as="h2">
-                    Contact Us
-                  </Text>
-                </div>
-                <Text variant="bodyMd">
-                  If you have any questions about this Privacy Policy, please contact us at 
-                  privacy@fbai-app.com, Facebook Ads Pro, 123 Business Ave, Suite 100, Tech City, TC 12345, 
-                  or call +1 (555) 123-4567.
-                </Text>
-              </div>
-            </div>
-          </Card>
-        </Layout.Section>
-      </Layout>
-    </Page>
+        <section style={{ marginBottom: '2rem' }}>
+          <h2 style={{ color: '#1c1e21', fontSize: '1.5rem', marginBottom: '1rem' }}>Changes to This Policy</h2>
+          <p style={{ color: '#65676b', lineHeight: '1.6' }}>
+            We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new 
+            Privacy Policy on this page and updating the "Last updated" date.
+          </p>
+        </section>
+
+        <section>
+          <h2 style={{ color: '#1c1e21', fontSize: '1.5rem', marginBottom: '1rem' }}>Contact Us</h2>
+          <p style={{ color: '#65676b', lineHeight: '1.6' }}>
+            If you have any questions about this Privacy Policy, please contact us at:
+          </p>
+          <div style={{ background: '#f8f9fa', padding: '1rem', borderRadius: '8px', marginTop: '1rem' }}>
+            <p style={{ margin: 0, color: '#65676b' }}>
+              <strong>Email:</strong> privacy@fbai-app.com<br />
+              <strong>Address:</strong> Facebook Ads Pro, Privacy Department<br />
+              123 Business Ave, Suite 100<br />
+              New York, NY 10001
+            </p>
+          </div>
+        </section>
+      </div>
+    </PublicLayout>
   );
 }

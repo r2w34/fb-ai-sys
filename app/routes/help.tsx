@@ -1,227 +1,209 @@
-import { json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
-import { 
-  Page, 
-  Layout, 
-  Card, 
-  Text, 
-  Divider, 
-  Button,
-  TextField,
-  Collapsible,
-  Badge
-} from "@shopify/polaris";
 import { useState } from "react";
-
-export const loader = async () => {
-  return json({
-    articles: [
-      {
-        id: "getting-started",
-        title: "Getting Started with Facebook Ads Pro",
-        category: "Setup",
-        description: "Learn how to set up your account and create your first campaign"
-      },
-      {
-        id: "facebook-connection",
-        title: "Connecting Your Facebook Business Manager",
-        category: "Setup", 
-        description: "Step-by-step guide to connect your Facebook advertising account"
-      },
-      {
-        id: "campaign-optimization",
-        title: "AI Campaign Optimization Features",
-        category: "Features",
-        description: "Understanding how our AI optimizes your campaigns for better performance"
-      },
-      {
-        id: "troubleshooting",
-        title: "Common Issues and Solutions",
-        category: "Troubleshooting",
-        description: "Quick fixes for the most common problems users encounter"
-      }
-    ]
-  });
-};
+import PublicLayout from "../components/PublicLayout";
 
 export default function Help() {
-  const { articles } = useLoaderData<typeof loader>();
   const [searchTerm, setSearchTerm] = useState("");
-  const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({});
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
-  const toggleSection = (key: string) => {
-    setOpenSections(prev => ({ ...prev, [key]: !prev[key] }));
-  };
-
-  const filteredArticles = articles.filter(article =>
-    article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    article.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const gettingStartedSteps = [
-    "Install Facebook Ads Pro from your Shopify App Store",
-    "Connect your Facebook Business Manager account",
-    "Import your product catalog from Shopify",
-    "Set up your first campaign using our AI wizard",
-    "Monitor performance and let AI optimize your campaigns"
+  const categories = [
+    { id: "all", name: "All Topics" },
+    { id: "getting-started", name: "Getting Started" },
+    { id: "campaigns", name: "Campaign Management" },
+    { id: "optimization", name: "Optimization" },
+    { id: "billing", name: "Billing & Plans" },
+    { id: "troubleshooting", name: "Troubleshooting" }
   ];
 
+  const articles = [
+    {
+      id: 1,
+      title: "Getting Started with Facebook Ads Pro",
+      category: "getting-started",
+      content: "Learn how to set up your account, connect Facebook, and launch your first campaign in under 10 minutes."
+    },
+    {
+      id: 2,
+      title: "Connecting Your Facebook Ad Account",
+      category: "getting-started",
+      content: "Step-by-step guide to securely connect your Facebook Business Manager and ad accounts."
+    },
+    {
+      id: 3,
+      title: "Understanding AI-Generated Audiences",
+      category: "campaigns",
+      content: "How our AI analyzes your products and creates high-converting audience segments automatically."
+    },
+    {
+      id: 4,
+      title: "Campaign Optimization Best Practices",
+      category: "optimization",
+      content: "Tips and strategies to maximize your ROAS using our automated optimization features."
+    },
+    {
+      id: 5,
+      title: "Billing and Subscription Management",
+      category: "billing",
+      content: "Everything you need to know about plans, billing cycles, and subscription changes."
+    },
+    {
+      id: 6,
+      title: "Troubleshooting Common Issues",
+      category: "troubleshooting",
+      content: "Solutions to the most common problems users encounter and how to resolve them quickly."
+    }
+  ];
+
+  const filteredArticles = articles.filter(article => {
+    const matchesSearch = article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         article.content.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === "all" || article.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
   return (
-    <Page
-      title="Help & Support"
-      subtitle="Find answers to your questions and learn how to maximize your results"
-      backAction={{ content: "Back to Home", url: "/" }}
-    >
-      <Layout>
-        <Layout.Section>
-          <Card sectioned>
-            <Text variant="headingMd" as="h2">
-              Search Help Articles
-            </Text>
-            <div style={{ marginTop: "1rem" }}>
-              <TextField
-                label=""
-                value={searchTerm}
-                onChange={setSearchTerm}
-                placeholder="Search for help articles..."
-                clearButton
-                onClearButtonClick={() => setSearchTerm("")}
-              />
-            </div>
-          </Card>
-        </Layout.Section>
+    <PublicLayout title="Help & Support">
+      <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+        {/* Search and Filter */}
+        <div style={{ marginBottom: '3rem' }}>
+          <div style={{ marginBottom: '1rem' }}>
+            <input
+              type="text"
+              placeholder="Search help articles..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '1rem',
+                border: '1px solid #ddd',
+                borderRadius: '8px',
+                fontSize: '1rem'
+              }}
+            />
+          </div>
+          
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+            {categories.map(category => (
+              <button
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                style={{
+                  padding: '0.5rem 1rem',
+                  border: '1px solid #ddd',
+                  borderRadius: '20px',
+                  background: selectedCategory === category.id ? '#1877f2' : 'white',
+                  color: selectedCategory === category.id ? 'white' : '#65676b',
+                  cursor: 'pointer',
+                  fontSize: '0.875rem'
+                }}
+              >
+                {category.name}
+              </button>
+            ))}
+          </div>
+        </div>
 
-        <Layout.Section oneHalf>
-          <Card sectioned>
-            <Text variant="headingMd" as="h2">
-              🚀 Quick Start Guide
-            </Text>
-            <div style={{ marginTop: "1rem" }}>
-              <Text variant="bodyMd">
-                Get up and running with Facebook Ads Pro in just 5 simple steps:
-              </Text>
-              <div style={{ marginTop: "1rem" }}>
-                {gettingStartedSteps.map((step, index) => (
-                  <div key={index} style={{ marginBottom: "0.5rem", display: "flex", alignItems: "flex-start" }}>
-                    <Badge status="info">{index + 1}</Badge>
-                    <div style={{ marginLeft: "0.5rem" }}>
-                      <Text variant="bodyMd">{step}</Text>
-                    </div>
+        {/* Quick Start Guide */}
+        <section style={{ marginBottom: '3rem' }}>
+          <h2 style={{ color: '#1c1e21', fontSize: '1.5rem', marginBottom: '1rem' }}>Quick Start Guide</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+            <div style={{ background: '#f8f9fa', padding: '1.5rem', borderRadius: '8px' }}>
+              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>1️⃣</div>
+              <h3 style={{ color: '#1c1e21', fontSize: '1.125rem', marginBottom: '0.5rem' }}>Connect Your Accounts</h3>
+              <p style={{ color: '#65676b', lineHeight: '1.6', margin: 0 }}>
+                Link your Shopify store and Facebook Business Manager to get started.
+              </p>
+            </div>
+            
+            <div style={{ background: '#f8f9fa', padding: '1.5rem', borderRadius: '8px' }}>
+              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>2️⃣</div>
+              <h3 style={{ color: '#1c1e21', fontSize: '1.125rem', marginBottom: '0.5rem' }}>AI Analysis</h3>
+              <p style={{ color: '#65676b', lineHeight: '1.6', margin: 0 }}>
+                Our AI analyzes your products and generates optimized campaign suggestions.
+              </p>
+            </div>
+            
+            <div style={{ background: '#f8f9fa', padding: '1.5rem', borderRadius: '8px' }}>
+              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>3️⃣</div>
+              <h3 style={{ color: '#1c1e21', fontSize: '1.125rem', marginBottom: '0.5rem' }}>Launch Campaigns</h3>
+              <p style={{ color: '#65676b', lineHeight: '1.6', margin: 0 }}>
+                Review and launch your AI-generated campaigns with one click.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Help Articles */}
+        <section>
+          <h2 style={{ color: '#1c1e21', fontSize: '1.5rem', marginBottom: '1rem' }}>
+            Help Articles ({filteredArticles.length})
+          </h2>
+          
+          {filteredArticles.length === 0 ? (
+            <div style={{ background: '#f8f9fa', padding: '2rem', borderRadius: '8px', textAlign: 'center' }}>
+              <p style={{ color: '#65676b', margin: 0 }}>
+                No articles found matching your search criteria.
+              </p>
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gap: '1rem' }}>
+              {filteredArticles.map(article => (
+                <div key={article.id} style={{ 
+                  background: 'white', 
+                  border: '1px solid #e1e5e9', 
+                  borderRadius: '8px', 
+                  padding: '1.5rem',
+                  cursor: 'pointer',
+                  transition: 'box-shadow 0.2s'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)'}
+                onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'none'}
+                >
+                  <h3 style={{ color: '#1c1e21', fontSize: '1.125rem', marginBottom: '0.5rem' }}>
+                    {article.title}
+                  </h3>
+                  <p style={{ color: '#65676b', lineHeight: '1.6', margin: 0 }}>
+                    {article.content}
+                  </p>
+                  <div style={{ marginTop: '1rem' }}>
+                    <span style={{ 
+                      background: '#e3f2fd', 
+                      color: '#1565c0', 
+                      padding: '0.25rem 0.5rem', 
+                      borderRadius: '4px', 
+                      fontSize: '0.75rem',
+                      textTransform: 'uppercase'
+                    }}>
+                      {categories.find(c => c.id === article.category)?.name}
+                    </span>
                   </div>
-                ))}
-              </div>
-              <div style={{ marginTop: "1.5rem" }}>
-                <Button primary url="/app/campaigns/new">
-                  Create Your First Campaign
-                </Button>
-              </div>
+                </div>
+              ))}
             </div>
-          </Card>
-        </Layout.Section>
+          )}
+        </section>
 
-        <Layout.Section oneHalf>
-          <Card sectioned>
-            <Text variant="headingMd" as="h2">
-              📚 Help Articles
-            </Text>
-            <div style={{ marginTop: "1rem" }}>
-              {filteredArticles.length === 0 ? (
-                <Text variant="bodyMd" color="subdued">
-                  No articles found matching your search.
-                </Text>
-              ) : (
-                filteredArticles.map((article) => (
-                  <div key={article.id} style={{ marginBottom: "1rem" }}>
-                    <Button
-                      plain
-                      onClick={() => toggleSection(article.id)}
-                      ariaExpanded={openSections[article.id]}
-                    >
-                      <div style={{ textAlign: "left" }}>
-                        <Text variant="bodyMd">
-                          {article.title}
-                        </Text>
-                        <div style={{ marginTop: "0.25rem" }}>
-                          <Badge>{article.category}</Badge>
-                        </div>
-                      </div>
-                    </Button>
-                    <Collapsible open={openSections[article.id]}>
-                      <div style={{ marginTop: "0.5rem", paddingLeft: "1rem" }}>
-                        <Text variant="bodyMd" color="subdued">
-                          {article.description}
-                        </Text>
-                        <div style={{ marginTop: "0.5rem" }}>
-                          <Button size="slim">
-                            Read Full Article
-                          </Button>
-                        </div>
-                      </div>
-                    </Collapsible>
-                    <Divider />
-                  </div>
-                ))
-              )}
-            </div>
-          </Card>
-        </Layout.Section>
-
-        <Layout.Section>
-          <Card sectioned>
-            <Text variant="headingMd" as="h2">
-              💡 Pro Tips for Success
-            </Text>
-            <div style={{ marginTop: "1rem", display: "flex", flexWrap: "wrap", gap: "1rem" }}>
-              <div style={{ flex: "1", minWidth: "300px" }}>
-                <Text variant="headingSm" as="h3">
-                  🎯 Audience Targeting
-                </Text>
-                <Text variant="bodyMd">
-                  Use our AI-powered audience suggestions to find customers most likely to convert. 
-                  Start broad and let our algorithm optimize for the best performers.
-                </Text>
-              </div>
-              <div style={{ flex: "1", minWidth: "300px" }}>
-                <Text variant="headingSm" as="h3">
-                  📊 Performance Monitoring
-                </Text>
-                <Text variant="bodyMd">
-                  Check your campaign performance daily for the first week, then let our AI 
-                  handle optimization. Focus on ROAS and conversion metrics.
-                </Text>
-              </div>
-              <div style={{ flex: "1", minWidth: "300px" }}>
-                <Text variant="headingSm" as="h3">
-                  🎨 Creative Testing
-                </Text>
-                <Text variant="bodyMd">
-                  Upload multiple product images and let our AI test different combinations. 
-                  High-quality visuals significantly impact campaign performance.
-                </Text>
-              </div>
-            </div>
-          </Card>
-        </Layout.Section>
-
-        <Layout.Section>
-          <Card sectioned>
-            <Text variant="headingMd" as="h2">
-              🆘 Still Need Help?
-            </Text>
-            <div style={{ marginTop: "1rem", display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-              <Button url="/contact">
-                Contact Support
-              </Button>
-              <Button url="mailto:support@fbai-app.com">
-                Email Us
-              </Button>
-              <Button url="https://calendly.com/fbai-app/support" external>
-                Schedule a Call
-              </Button>
-            </div>
-          </Card>
-        </Layout.Section>
-      </Layout>
-    </Page>
+        {/* Contact Support */}
+        <section style={{ marginTop: '3rem', background: '#f8f9fa', padding: '2rem', borderRadius: '8px', textAlign: 'center' }}>
+          <h2 style={{ color: '#1c1e21', fontSize: '1.5rem', marginBottom: '1rem' }}>Still Need Help?</h2>
+          <p style={{ color: '#65676b', lineHeight: '1.6', marginBottom: '1.5rem' }}>
+            Can't find what you're looking for? Our support team is here to help you succeed.
+          </p>
+          <a 
+            href="/contact"
+            style={{
+              background: '#1877f2',
+              color: 'white',
+              padding: '0.75rem 1.5rem',
+              borderRadius: '6px',
+              textDecoration: 'none',
+              fontWeight: '500',
+              display: 'inline-block'
+            }}
+          >
+            Contact Support
+          </a>
+        </section>
+      </div>
+    </PublicLayout>
   );
 }
