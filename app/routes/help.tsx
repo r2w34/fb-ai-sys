@@ -5,371 +5,220 @@ import {
   Layout, 
   Card, 
   Text, 
-  Stack, 
   Divider, 
   Button,
-  Badge,
-  Grid,
+  TextField,
   Collapsible,
-  TextField
+  Badge
 } from "@shopify/polaris";
 import { useState } from "react";
 
 export const loader = async () => {
   return json({
-    helpCategories: [
+    articles: [
       {
         id: "getting-started",
-        title: "Getting Started",
-        icon: "🚀",
-        articles: [
-          { title: "Installing Facebook Ads Pro", url: "#install" },
-          { title: "Connecting Your Facebook Account", url: "#connect-fb" },
-          { title: "Setting Up Your First Campaign", url: "#first-campaign" },
-          { title: "Understanding the Dashboard", url: "#dashboard" }
-        ]
+        title: "Getting Started with Facebook Ads Pro",
+        category: "Setup",
+        description: "Learn how to set up your account and create your first campaign"
       },
       {
-        id: "campaign-management",
-        title: "Campaign Management",
-        icon: "📊",
-        articles: [
-          { title: "Creating Effective Ad Copy", url: "#ad-copy" },
-          { title: "Audience Targeting Best Practices", url: "#targeting" },
-          { title: "Budget and Bidding Strategies", url: "#budget" },
-          { title: "Campaign Optimization Tips", url: "#optimization" }
-        ]
+        id: "facebook-connection",
+        title: "Connecting Your Facebook Business Manager",
+        category: "Setup", 
+        description: "Step-by-step guide to connect your Facebook advertising account"
       },
       {
-        id: "ai-features",
-        title: "AI Features",
-        icon: "🤖",
-        articles: [
-          { title: "How AI Ad Copy Generation Works", url: "#ai-copy" },
-          { title: "AI Audience Suggestions", url: "#ai-audience" },
-          { title: "Automated Campaign Optimization", url: "#ai-optimization" },
-          { title: "Performance Predictions", url: "#ai-predictions" }
-        ]
-      },
-      {
-        id: "analytics",
-        title: "Analytics & Reporting",
-        icon: "📈",
-        articles: [
-          { title: "Understanding Your Metrics", url: "#metrics" },
-          { title: "Custom Reports and Dashboards", url: "#reports" },
-          { title: "ROI Tracking and Attribution", url: "#roi" },
-          { title: "Competitive Analysis", url: "#competitive" }
-        ]
+        id: "campaign-optimization",
+        title: "AI Campaign Optimization Features",
+        category: "Features",
+        description: "Understanding how our AI optimizes your campaigns for better performance"
       },
       {
         id: "troubleshooting",
-        title: "Troubleshooting",
-        icon: "🔧",
-        articles: [
-          { title: "Common Setup Issues", url: "#setup-issues" },
-          { title: "Campaign Not Delivering", url: "#not-delivering" },
-          { title: "Facebook Policy Violations", url: "#policy" },
-          { title: "Billing and Payment Issues", url: "#billing" }
-        ]
-      },
-      {
-        id: "advanced",
-        title: "Advanced Features",
-        icon: "⚡",
-        articles: [
-          { title: "Custom Audiences and Lookalikes", url: "#custom-audiences" },
-          { title: "Dynamic Product Ads", url: "#dynamic-ads" },
-          { title: "Multi-Account Management", url: "#multi-account" },
-          { title: "API Integration", url: "#api" }
-        ]
+        title: "Common Issues and Solutions",
+        category: "Troubleshooting",
+        description: "Quick fixes for the most common problems users encounter"
       }
     ]
   });
 };
 
 export default function Help() {
-  const { helpCategories } = useLoaderData<typeof loader>();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [openSections, setOpenSections] = useState<string[]>([]);
+  const { articles } = useLoaderData<typeof loader>();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({});
 
-  const toggleSection = (sectionId: string) => {
-    setOpenSections(prev => 
-      prev.includes(sectionId) 
-        ? prev.filter(id => id !== sectionId)
-        : [...prev, sectionId]
-    );
+  const toggleSection = (key: string) => {
+    setOpenSections(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const filteredCategories = helpCategories.filter(category =>
-    category.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    category.articles.some(article => 
-      article.title.toLowerCase().includes(searchQuery.toLowerCase())
-    )
+  const filteredArticles = articles.filter(article =>
+    article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    article.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const gettingStartedSteps = [
+    "Install Facebook Ads Pro from your Shopify App Store",
+    "Connect your Facebook Business Manager account",
+    "Import your product catalog from Shopify",
+    "Set up your first campaign using our AI wizard",
+    "Monitor performance and let AI optimize your campaigns"
+  ];
 
   return (
     <Page
       title="Help & Support"
-      subtitle="Find answers to common questions and learn how to get the most out of Facebook Ads Pro"
+      subtitle="Find answers to your questions and learn how to maximize your results"
       backAction={{ content: "Back to Home", url: "/" }}
     >
       <Layout>
         <Layout.Section>
           <Card sectioned>
-            <Stack vertical spacing="tight">
-              <Text variant="headingMd" as="h2">
-                Search Help Articles
-              </Text>
+            <Text variant="headingMd" as="h2">
+              Search Help Articles
+            </Text>
+            <div style={{ marginTop: "1rem" }}>
               <TextField
                 label=""
-                value={searchQuery}
-                onChange={setSearchQuery}
-                placeholder="Search for help articles, features, or topics..."
+                value={searchTerm}
+                onChange={setSearchTerm}
+                placeholder="Search for help articles..."
                 clearButton
-                onClearButtonClick={() => setSearchQuery("")}
+                onClearButtonClick={() => setSearchTerm("")}
               />
-            </Stack>
+            </div>
           </Card>
         </Layout.Section>
 
-        <Layout.Section>
-          <Grid>
-            <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 4, lg: 8, xl: 8 }}>
-              <Stack vertical spacing="loose">
-                {filteredCategories.map((category) => (
-                  <Card key={category.id}>
-                    <Stack vertical spacing="tight">
-                      <div 
-                        style={{ cursor: "pointer", padding: "16px" }}
-                        onClick={() => toggleSection(category.id)}
-                      >
-                        <Stack alignment="center" distribution="equalSpacing">
-                          <Stack alignment="center">
-                            <Text variant="headingMd" as="h3">
-                              {category.icon} {category.title}
-                            </Text>
-                          </Stack>
-                          <Badge>
-                            {category.articles.length} articles
-                          </Badge>
-                        </Stack>
-                      </div>
-                      
-                      <Collapsible
-                        open={openSections.includes(category.id)}
-                        id={category.id}
-                        transition={{ duration: "200ms", timingFunction: "ease-in-out" }}
-                      >
-                        <div style={{ padding: "0 16px 16px" }}>
-                          <Stack vertical spacing="tight">
-                            {category.articles.map((article, index) => (
-                              <div key={index} style={{ padding: "8px 0" }}>
-                                <Button plain url={article.url}>
-                                  {article.title}
-                                </Button>
-                              </div>
-                            ))}
-                          </Stack>
-                        </div>
-                      </Collapsible>
-                    </Stack>
-                  </Card>
+        <Layout.Section oneHalf>
+          <Card sectioned>
+            <Text variant="headingMd" as="h2">
+              🚀 Quick Start Guide
+            </Text>
+            <div style={{ marginTop: "1rem" }}>
+              <Text variant="bodyMd">
+                Get up and running with Facebook Ads Pro in just 5 simple steps:
+              </Text>
+              <div style={{ marginTop: "1rem" }}>
+                {gettingStartedSteps.map((step, index) => (
+                  <div key={index} style={{ marginBottom: "0.5rem", display: "flex", alignItems: "flex-start" }}>
+                    <Badge status="info">{index + 1}</Badge>
+                    <div style={{ marginLeft: "0.5rem" }}>
+                      <Text variant="bodyMd">{step}</Text>
+                    </div>
+                  </div>
                 ))}
-              </Stack>
-            </Grid.Cell>
-
-            <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 2, lg: 4, xl: 4 }}>
-              <Stack vertical spacing="loose">
-                <Card sectioned>
-                  <Stack vertical spacing="tight">
-                    <Text variant="headingMd" as="h3">
-                      🎥 Video Tutorials
-                    </Text>
-                    <Text variant="bodyMd">
-                      Watch step-by-step video guides to master Facebook Ads Pro.
-                    </Text>
-                    <Button primary>
-                      Watch Tutorials
-                    </Button>
-                  </Stack>
-                </Card>
-
-                <Card sectioned>
-                  <Stack vertical spacing="tight">
-                    <Text variant="headingMd" as="h3">
-                      📚 Best Practices Guide
-                    </Text>
-                    <Text variant="bodyMd">
-                      Learn proven strategies for successful Facebook advertising.
-                    </Text>
-                    <Button outline>
-                      Download Guide
-                    </Button>
-                  </Stack>
-                </Card>
-
-                <Card sectioned>
-                  <Stack vertical spacing="tight">
-                    <Text variant="headingMd" as="h3">
-                      💬 Community Forum
-                    </Text>
-                    <Text variant="bodyMd">
-                      Connect with other merchants and share experiences.
-                    </Text>
-                    <Button outline>
-                      Join Community
-                    </Button>
-                  </Stack>
-                </Card>
-
-                <Card sectioned>
-                  <Stack vertical spacing="tight">
-                    <Text variant="headingMd" as="h3">
-                      🎯 Free Consultation
-                    </Text>
-                    <Text variant="bodyMd">
-                      Schedule a free 30-minute consultation with our experts.
-                    </Text>
-                    <Button primary>
-                      Book Consultation
-                    </Button>
-                  </Stack>
-                </Card>
-              </Stack>
-            </Grid.Cell>
-          </Grid>
+              </div>
+              <div style={{ marginTop: "1.5rem" }}>
+                <Button primary url="/app/campaigns/new">
+                  Create Your First Campaign
+                </Button>
+              </div>
+            </div>
+          </Card>
         </Layout.Section>
 
-        <Layout.Section>
-          <Card>
-            <Stack vertical spacing="loose">
-              <Text variant="headingLg" as="h2">
-                Quick Start Guide
-              </Text>
-              
-              <Divider />
-              
-              <Grid>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 3, xl: 3 }}>
-                  <Card sectioned>
-                    <Stack vertical spacing="tight" alignment="center">
-                      <div style={{ fontSize: "2rem" }}>1️⃣</div>
-                      <Text variant="headingMd" as="h3" alignment="center">
-                        Install & Connect
-                      </Text>
-                      <Text variant="bodyMd" alignment="center">
-                        Install the app from Shopify App Store and connect your Facebook Business Manager account.
-                      </Text>
-                    </Stack>
-                  </Card>
-                </Grid.Cell>
-                
-                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 3, xl: 3 }}>
-                  <Card sectioned>
-                    <Stack vertical spacing="tight" alignment="center">
-                      <div style={{ fontSize: "2rem" }}>2️⃣</div>
-                      <Text variant="headingMd" as="h3" alignment="center">
-                        Set Your Goals
-                      </Text>
-                      <Text variant="bodyMd" alignment="center">
-                        Define your advertising objectives, budget, and target audience preferences.
-                      </Text>
-                    </Stack>
-                  </Card>
-                </Grid.Cell>
-                
-                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 3, xl: 3 }}>
-                  <Card sectioned>
-                    <Stack vertical spacing="tight" alignment="center">
-                      <div style={{ fontSize: "2rem" }}>3️⃣</div>
-                      <Text variant="headingMd" as="h3" alignment="center">
-                        AI Creates Campaigns
-                      </Text>
-                      <Text variant="bodyMd" alignment="center">
-                        Our AI analyzes your products and creates optimized campaigns with compelling ad copy.
-                      </Text>
-                    </Stack>
-                  </Card>
-                </Grid.Cell>
-                
-                <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 3, xl: 3 }}>
-                  <Card sectioned>
-                    <Stack vertical spacing="tight" alignment="center">
-                      <div style={{ fontSize: "2rem" }}>4️⃣</div>
-                      <Text variant="headingMd" as="h3" alignment="center">
-                        Monitor & Optimize
-                      </Text>
-                      <Text variant="bodyMd" alignment="center">
-                        Track performance in real-time and let AI continuously optimize for better results.
-                      </Text>
-                    </Stack>
-                  </Card>
-                </Grid.Cell>
-              </Grid>
-            </Stack>
+        <Layout.Section oneHalf>
+          <Card sectioned>
+            <Text variant="headingMd" as="h2">
+              📚 Help Articles
+            </Text>
+            <div style={{ marginTop: "1rem" }}>
+              {filteredArticles.length === 0 ? (
+                <Text variant="bodyMd" color="subdued">
+                  No articles found matching your search.
+                </Text>
+              ) : (
+                filteredArticles.map((article) => (
+                  <div key={article.id} style={{ marginBottom: "1rem" }}>
+                    <Button
+                      plain
+                      onClick={() => toggleSection(article.id)}
+                      ariaExpanded={openSections[article.id]}
+                    >
+                      <div style={{ textAlign: "left" }}>
+                        <Text variant="bodyMd">
+                          {article.title}
+                        </Text>
+                        <div style={{ marginTop: "0.25rem" }}>
+                          <Badge>{article.category}</Badge>
+                        </div>
+                      </div>
+                    </Button>
+                    <Collapsible open={openSections[article.id]}>
+                      <div style={{ marginTop: "0.5rem", paddingLeft: "1rem" }}>
+                        <Text variant="bodyMd" color="subdued">
+                          {article.description}
+                        </Text>
+                        <div style={{ marginTop: "0.5rem" }}>
+                          <Button size="slim">
+                            Read Full Article
+                          </Button>
+                        </div>
+                      </div>
+                    </Collapsible>
+                    <Divider />
+                  </div>
+                ))
+              )}
+            </div>
           </Card>
         </Layout.Section>
 
         <Layout.Section>
-          <Card>
-            <Stack vertical spacing="loose">
-              <Text variant="headingLg" as="h2">
-                Still Need Help?
-              </Text>
-              
-              <Divider />
-              
-              <Grid>
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 2, lg: 4, xl: 4 }}>
-                  <Card sectioned>
-                    <Stack vertical spacing="tight">
-                      <Text variant="headingMd" as="h3">
-                        📧 Email Support
-                      </Text>
-                      <Text variant="bodyMd">
-                        Get detailed help via email. We typically respond within 24 hours.
-                      </Text>
-                      <Button primary url="/contact">
-                        Contact Support
-                      </Button>
-                    </Stack>
-                  </Card>
-                </Grid.Cell>
-                
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 2, lg: 4, xl: 4 }}>
-                  <Card sectioned>
-                    <Stack vertical spacing="tight">
-                      <Text variant="headingMd" as="h3">
-                        💬 Live Chat
-                      </Text>
-                      <Text variant="bodyMd">
-                        Chat with our support team in real-time during business hours.
-                      </Text>
-                      <Button outline>
-                        Start Live Chat
-                      </Button>
-                    </Stack>
-                  </Card>
-                </Grid.Cell>
-                
-                <Grid.Cell columnSpan={{ xs: 6, sm: 6, md: 2, lg: 4, xl: 4 }}>
-                  <Card sectioned>
-                    <Stack vertical spacing="tight">
-                      <Text variant="headingMd" as="h3">
-                        📞 Phone Support
-                      </Text>
-                      <Text variant="bodyMd">
-                        Call us for urgent technical issues or complex questions.
-                      </Text>
-                      <Text variant="bodyMd" color="subdued">
-                        +1 (555) 123-4567
-                      </Text>
-                    </Stack>
-                  </Card>
-                </Grid.Cell>
-              </Grid>
-            </Stack>
+          <Card sectioned>
+            <Text variant="headingMd" as="h2">
+              💡 Pro Tips for Success
+            </Text>
+            <div style={{ marginTop: "1rem", display: "flex", flexWrap: "wrap", gap: "1rem" }}>
+              <div style={{ flex: "1", minWidth: "300px" }}>
+                <Text variant="headingSm" as="h3">
+                  🎯 Audience Targeting
+                </Text>
+                <Text variant="bodyMd">
+                  Use our AI-powered audience suggestions to find customers most likely to convert. 
+                  Start broad and let our algorithm optimize for the best performers.
+                </Text>
+              </div>
+              <div style={{ flex: "1", minWidth: "300px" }}>
+                <Text variant="headingSm" as="h3">
+                  📊 Performance Monitoring
+                </Text>
+                <Text variant="bodyMd">
+                  Check your campaign performance daily for the first week, then let our AI 
+                  handle optimization. Focus on ROAS and conversion metrics.
+                </Text>
+              </div>
+              <div style={{ flex: "1", minWidth: "300px" }}>
+                <Text variant="headingSm" as="h3">
+                  🎨 Creative Testing
+                </Text>
+                <Text variant="bodyMd">
+                  Upload multiple product images and let our AI test different combinations. 
+                  High-quality visuals significantly impact campaign performance.
+                </Text>
+              </div>
+            </div>
+          </Card>
+        </Layout.Section>
+
+        <Layout.Section>
+          <Card sectioned>
+            <Text variant="headingMd" as="h2">
+              🆘 Still Need Help?
+            </Text>
+            <div style={{ marginTop: "1rem", display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+              <Button url="/contact">
+                Contact Support
+              </Button>
+              <Button url="mailto:support@fbai-app.com">
+                Email Us
+              </Button>
+              <Button url="https://calendly.com/fbai-app/support" external>
+                Schedule a Call
+              </Button>
+            </div>
           </Card>
         </Layout.Section>
       </Layout>
