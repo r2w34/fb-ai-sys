@@ -157,6 +157,46 @@ export default function App() {
             </button>
           )}
         </div>
+
+        <div className={styles.footer}>
+          <div className={styles.footerContent}>
+            <div className={styles.footerSection}>
+              <h3>Company</h3>
+              <ul className={styles.footerLinks}>
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/contact">Contact</a></li>
+                <li><a href="/help">Help & Support</a></li>
+              </ul>
+            </div>
+            <div className={styles.footerSection}>
+              <h3>Legal</h3>
+              <ul className={styles.footerLinks}>
+                <li><a href="/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/terms-of-service">Terms of Service</a></li>
+              </ul>
+            </div>
+            <div className={styles.footerSection}>
+              <h3>Resources</h3>
+              <ul className={styles.footerLinks}>
+                <li><a href="/help">Documentation</a></li>
+                <li><a href="/contact">Support</a></li>
+                <li><a href="/about">Case Studies</a></li>
+              </ul>
+            </div>
+            <div className={styles.footerSection}>
+              <h3>Connect</h3>
+              <ul className={styles.footerLinks}>
+                <li><a href="mailto:support@fbai-app.com">Email</a></li>
+                <li><a href="tel:+15551234567">Phone</a></li>
+                <li><a href="/contact">Live Chat</a></li>
+              </ul>
+            </div>
+          </div>
+          <div className={styles.footerBottom}>
+            <p>&copy; 2024 Facebook Ads Pro. All rights reserved.</p>
+            <p>Powered by AI • Built for Shopify • Trusted by 2,500+ merchants</p>
+          </div>
+        </div>
       </div>
     </div>
   );
